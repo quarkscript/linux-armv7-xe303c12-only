@@ -6,7 +6,7 @@ _srcname=linux-5.8
 _kernelname=${pkgbase#linux}
 _desc="ARMv7 XE303C12-platform"
 pkgver=5.8.13
-pkgrel=3
+pkgrel=5
 rcnver=5.8.5
 rcnrel=armv7-x11
 arch=('armv7h')
@@ -89,13 +89,13 @@ build() {
   
   echo force custom flags
   for tmpcycle in $(find -name Makefile); do
-    sed -i "s/armv7-a/armv7-a+mp+neon-vfpv4/g" $tmpcycle
-    sed -i "s/vfvp /vfpv4 /g" $tmpcycle
-    sed -i "s/vfvp,/vfpv4,/g" $tmpcycle
-    sed -i "s/-O2 /-O2 -march=armv7-a+mp+neon-vfpv4 --param l1-cache-size=64 --param l2-cache-size=1024 -faggressive-loop-optimizations -fguess-branch-probability -floop-nest-optimize -fomit-frame-pointer -fsel-sched-pipelining -fsel-sched-pipelining-outer-loops -fpredictive-commoning -fprefetch-loop-arrays -fsimd-cost-model=dynamic -fvect-cost-model=dynamic -ftree-loop-optimize -funroll-loops -floop-unroll-and-jam /g" $tmpcycle
+    sed -i "s/armv7-a/armv7-a+mp+neon-vfpv4  --param l1-cache-size=64 --param l2-cache-size=1024 -faggressive-loop-optimizations -fguess-branch-probability -floop-nest-optimize -fomit-frame-pointer -fsel-sched-pipelining -fsel-sched-pipelining-outer-loops -fpredictive-commoning -fprefetch-loop-arrays -ftree-loop-optimize /g" $tmpcycle
+    sed -i "s/vfpv /vfpv4 /g" $tmpcycle
+    sed -i "s/vfpv,/vfpv4,/g" $tmpcycle
+    sed -i "s/-O2/-O2 -march=armv7-a+mp+neon-vfpv4 --param l1-cache-size=64 --param l2-cache-size=1024 -faggressive-loop-optimizations -fguess-branch-probability -floop-nest-optimize -fomit-frame-pointer -fsel-sched-pipelining -fsel-sched-pipelining-outer-loops -fpredictive-commoning -fprefetch-loop-arrays -ftree-loop-optimize /g" $tmpcycle
   done
   
-  make ${MAKEFLAGS} zImage modules dtbs
+  make ${MAKEFLAGS} -j2 zImage modules dtbs
 }
 
 package() {
@@ -339,6 +339,7 @@ cd "${srcdir}/${_srcname}"
     --signprivate ../kernel_data_key.vbprivk \
     --config cmdline \
     --bootloader bootloader.bin
+  #mkdir -p "${pkgdir}/boot"
   cp vmlinux.kpart "${pkgdir}/boot"    
     
 }
