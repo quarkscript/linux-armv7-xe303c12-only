@@ -5,8 +5,8 @@ pkgname=$pkgbase
 _srcname=linux-5.8
 _kernelname=${pkgbase#linux}
 _desc="ARMv7 XE303C12-platform"
-pkgver=5.8.12
-pkgrel=1
+pkgver=5.8.13
+pkgrel=3
 rcnver=5.8.5
 rcnrel=armv7-x11
 arch=('armv7h')
@@ -81,8 +81,20 @@ build() {
   cd "${srcdir}/${_srcname}"
   make prepare
   make menuconfig
-  export CFLAGS+="-O2 -pipe -fno-plt -march=armv7-a -mfloat-abi=hard -mfpu=neon-vfpv4 -O2 -pipe -fstack-protector-strong -fno-plt -march=armv7-a+mp+neon-vfpv4 -mfpu=neon-vfpv4 --param l1-cache-size=64 --param l2-cache-size=1024 -fno-strict-aliasing -faggressive-loop-optimizations -fcombine-stack-adjustments -fcprop-registers -fcrossjumping -fdce -fdelayed-branch -fdelete-dead-exceptions -fdelete-null-pointer-checks -fdse -fforward-propagate -fgcse -fgcse-after-reload -fguess-branch-probability -fif-conversion2 -fipa-sra -fira-hoist-pressure -fira-loop-pressure -fira-share-save-slots -fivopts -fjump-tables -floop-interchange -floop-nest-optimize -floop-unroll-and-jam -fmove-loop-invariants -fomit-frame-pointer -foptimize-sibling-calls -foptimize-strlen -fpeel-loops -fpeephole -fpeephole2 -fpredictive-commoning -fprefetch-loop-arrays -freg-struct-return -frename-registers -frerun-cse-after-loop -fschedule-fusion -fsel-sched-pipelining -fsel-sched-pipelining-outer-loops -fshrink-wrap-separate -fsimd-cost-model=dynamic -fsplit-ivs-in-unroller -fsplit-loops -fsplit-paths -fssa-backprop -fssa-phiopt -fstdarg-opt -fthread-jumps -ftree-bit-ccp -ftree-builtin-call-dce -ftree-ccp -ftree-cselim -ftree-dce -ftree-dominator-opts -ftree-dse -ftree-forwprop -ftree-loop-distribution -ftree-loop-optimize -ftree-loop-vectorize -ftree-pre -ftree-slp-vectorize -ftree-vectorize -funroll-loops -fvect-cost-model=dynamic "
-  export CXXFLAGS+="-O2 -pipe -fno-plt -march=armv7-a -mfloat-abi=hard -mfpu=neon-vfpv4 -O2 -pipe -fstack-protector-strong -fno-plt -march=armv7-a+mp+neon-vfpv4 -mfpu=neon-vfpv4 --param l1-cache-size=64 --param l2-cache-size=1024 -fno-strict-aliasing -faggressive-loop-optimizations -fcombine-stack-adjustments -fcprop-registers -fcrossjumping -fdce -fdelayed-branch -fdelete-dead-exceptions -fdelete-null-pointer-checks -fdse -fforward-propagate -fgcse -fgcse-after-reload -fguess-branch-probability -fif-conversion2 -fipa-sra -fira-hoist-pressure -fira-loop-pressure -fira-share-save-slots -fivopts -fjump-tables -floop-interchange -floop-nest-optimize -floop-unroll-and-jam -fmove-loop-invariants -fomit-frame-pointer -foptimize-sibling-calls -foptimize-strlen -fpeel-loops -fpeephole -fpeephole2 -fpredictive-commoning -fprefetch-loop-arrays -freg-struct-return -frename-registers -frerun-cse-after-loop -fschedule-fusion -fsel-sched-pipelining -fsel-sched-pipelining-outer-loops -fshrink-wrap-separate -fsimd-cost-model=dynamic -fsplit-ivs-in-unroller -fsplit-loops -fsplit-paths -fssa-backprop -fssa-phiopt -fstdarg-opt -fthread-jumps -ftree-bit-ccp -ftree-builtin-call-dce -ftree-ccp -ftree-cselim -ftree-dce -ftree-dominator-opts -ftree-dse -ftree-forwprop -ftree-loop-distribution -ftree-loop-optimize -ftree-loop-vectorize -ftree-pre -ftree-slp-vectorize -ftree-vectorize -funroll-loops -fvect-cost-model=dynamic "
+  ff="-O2 -pipe -fno-plt -mfloat-abi=hard -mfpu=neon-vfpv4 -pipe -fstack-protector-strong -march=armv7-a+mp+neon --param l1-cache-size=64 --param l2-cache-size=1024 -fno-strict-aliasing -faggressive-loop-optimizations -fcombine-stack-adjustments -fcprop-registers -fcrossjumping -fdce -fdelayed-branch -fdelete-dead-exceptions -fdelete-null-pointer-checks -fdse -fforward-propagate -fgcse -fgcse-after-reload -fguess-branch-probability -fif-conversion2 -fipa-sra -fira-hoist-pressure -fira-loop-pressure -fira-share-save-slots -fivopts -fjump-tables -floop-interchange -floop-nest-optimize -floop-unroll-and-jam -fmove-loop-invariants -fomit-frame-pointer -foptimize-sibling-calls -foptimize-strlen -fpeel-loops -fpeephole -fpeephole2 -fpredictive-commoning -fprefetch-loop-arrays -freg-struct-return -frename-registers -frerun-cse-after-loop -fschedule-fusion -fsel-sched-pipelining -fsel-sched-pipelining-outer-loops -fshrink-wrap-separate -fsimd-cost-model=dynamic -fsplit-ivs-in-unroller -fsplit-loops -fsplit-paths -fssa-backprop -fssa-phiopt -fstdarg-opt -fthread-jumps -ftree-bit-ccp -ftree-builtin-call-dce -ftree-ccp -ftree-cselim -ftree-dce -ftree-dominator-opts -ftree-dse -ftree-forwprop -ftree-loop-distribution -ftree-loop-optimize -ftree-loop-vectorize -ftree-pre -ftree-slp-vectorize -ftree-vectorize -funroll-loops -fvect-cost-model=dynamic "
+#  CFLAGS+="$ff" 
+#  CXXFLAGS+="$ff"
+  export CFLAGS+="$ff" 
+  export CXXFLAGS+="$ff"
+  
+  echo force custom flags
+  for tmpcycle in $(find -name Makefile); do
+    sed -i "s/armv7-a/armv7-a+mp+neon-vfpv4/g" $tmpcycle
+    sed -i "s/vfvp /vfpv4 /g" $tmpcycle
+    sed -i "s/vfvp,/vfpv4,/g" $tmpcycle
+    sed -i "s/-O2 /-O2 -march=armv7-a+mp+neon-vfpv4 --param l1-cache-size=64 --param l2-cache-size=1024 -faggressive-loop-optimizations -fguess-branch-probability -floop-nest-optimize -fomit-frame-pointer -fsel-sched-pipelining -fsel-sched-pipelining-outer-loops -fpredictive-commoning -fprefetch-loop-arrays -fsimd-cost-model=dynamic -fvect-cost-model=dynamic -ftree-loop-optimize -funroll-loops -floop-unroll-and-jam /g" $tmpcycle
+  done
+  
   make ${MAKEFLAGS} zImage modules dtbs
 }
 
@@ -138,31 +150,33 @@ echo 'flash_kernel() {
     fi
   done
   
-  echo ''
+  echo ""
   if [ "$krnprtc" -eq 0 ]; then
-    echo ChromeOs kernel partition did not detected. You must reflash kernel manually.
+    echo "ChromeOs kernel partition did not detected." 
+    echo "You must reflash kernel manually."
   elif [ "$krnprtc" -eq 1 ]; then
-    echo Finded ChromeOs kernel partition - $krnprts Do you want to flash a new kernel to it? (y/n)
+    echo "Finded ChromeOs kernel partition - $krnprts"
+    echo "Do you want to flash a new kernel to it? (y/n)"
     read -r shouldwe
     if [[ $shouldwe =~ ^([yY][eE][sS]|[yY])$ ]]; then
       dd if=/boot/vmlinux.kpart of=/dev/$krnprts
       sync
     else
-      echo You may flash kernel manually by run: 
-      echo dd if=/boot/vmlinux.kpart of=/dev/$krnprts
+      echo "You may flash kernel manually like:"
+      echo "dd if=/boot/vmlinux.kpart of=/dev/$krnprts"
     fi
   else
-    echo Finded more than one ChromeOs kernel partition. You need to select one.
-    echo ''
+    echo "Finded more than one ChromeOs kernel partition."
+    echo "You need to select next action
+    "
+    echo "0 for do not flash"
     numpart=0
     for i in $krnprts; do
       numpart=$(($numpart+1))
-      echo $numpart $i
+      echo "$numpart for flash $i partition"
     done
-    echo ''
-    echo 0 for do not flash
-    echo ''
-    echo Wrong partition may lead to bootfail. Be aware!
+    echo ""
+    echo "Wrong partition may lead to bootfail or disk fail. Be aware!"
     read -r shouldwe
     if [ $shouldwe -gt 0 ]&&[ $shouldwe -le $numpart ]; then
       numpart=0
@@ -325,7 +339,6 @@ cd "${srcdir}/${_srcname}"
     --signprivate ../kernel_data_key.vbprivk \
     --config cmdline \
     --bootloader bootloader.bin
-  #mkdir -p "${pkgdir}/boot"
   cp vmlinux.kpart "${pkgdir}/boot"    
     
 }
