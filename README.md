@@ -1,5 +1,8 @@
-### Linux kernel for old armv7 chromebook
+### Linux kernel for old armv7 [chromebook](https://www.samsung.com/us/support/owners/product/chromebook-xe303c12)
 
+([short demo](https://www.youtube.com/watch?v=hZt1fPso0e0) of running linux on this device)
+
+#### [archlinuxarm folder](archlinuxarm) 
 Forked from https://github.com/archlinuxarm/PKGBUILDs/tree/master/core/linux-armv7. Arch Linux Arm compatible kernel package.
 
 Difference:
@@ -10,4 +13,7 @@ Difference:
 - detects Chrome OS Kernel partition for flashing kernel
 - support samsung\google snow - [XE303C12 chromebook](https://archlinuxarm.org/platforms/armv7/samsung/samsung-chromebook) only 
 
-[small demo of running linux on this device](https://www.youtube.com/watch?v=hZt1fPso0e0)
+#### [voidlinux folder](voidlinux)
+The same, but for voidlinux. Second forked source is https://github.com/void-linux/void-packages/tree/master/srcpkgs/linux5.8. 
+
+linux_xe303c12 can be cross-compiled with [xbps-src](https://github.com/void-linux/void-packages) into voidlinux package with armv7hf-glibc or armv7hf-musl architectures.
