@@ -1,0 +1,56 @@
+#!/bin/bash
+
+  krnprts=""
+  krnprtc=0
+  for i in $(ls /dev | grep -x --regexp="mmcblk[0-9]" --regexp="sd[a-z]"); do
+    if $(cgpt show /dev/$i | grep Label | grep -q [Kk]ernel); then
+      if $(echo $i | grep -q mmcblk); then
+        krnprts+="$i""p$(cgpt show /dev/$i | grep Label | grep [Kk]ernel -m 1 | sed 's/  / /g' | sed 's/  / /g' | sed 's/ La.*//g' | sed 's/.* //g') "
+      else
+        krnprts+="$i$(cgpt show /dev/$i | grep Label | grep [Kk]ernel -m 1 | sed 's/  / /g' | sed 's/  / /g' | sed 's/ La.*//g' | sed 's/.* //g') "
+      fi
+      krnprtc=$(($krnprtc+1))
+    fi
+  done
+  
+  echo ""
+  if [ "$krnprtc" -eq 0 ]; then
+    echo "ChromeOs kernel partition did not detected." 
+    echo "You must reflash kernel manually."
+  elif [ "$krnprtc" -eq 1 ]; then
+    echo "Finded ChromeOs kernel partition - $krnprts"
+    echo "Do you want to flash a new kernel to it? (y/n)"
+    read -r shouldwe
+    if [[ $shouldwe =~ ^([yY][eE][sS]|[yY])$ ]]; then
+      dd if=/boot/vmlinux.kpart of=/dev/$krnprts
+      sync
+    else
+      echo "You may flash kernel manually like:"
+      echo "dd if=/boot/vmlinux.kpart of=/dev/$krnprts"
+    fi
+  else
+    echo "Finded more than one ChromeOs kernel partition."
+    echo "You need to select next action
+    "
+    echo "0 for do not flash"
+    numpart=0
+    for i in $krnprts; do
+      numpart=$(($numpart+1))
+      echo "$numpart for flash $i partition"
+    done
+    echo ""
+    echo "Wrong partition may lead to bootfail or disk fail. Be aware!"
+    read -r shouldwe
+    if [ $shouldwe -gt 0 ]&&[ $shouldwe -le $numpart ]; then
+      numpart=0
+      for i in $krnprts; do
+        numpart=$(($numpart+1))
+        if [ $numpart -eq $shouldwe ]; then
+          dd if=/boot/vmlinux.kpart of=/dev/$i
+          sync
+        fi
+      done
+    fi
+  fi
+
+echo ''
