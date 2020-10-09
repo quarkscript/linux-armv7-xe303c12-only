@@ -17,3 +17,5 @@ Difference:
 The same, but for voidlinux. Second forked source is https://github.com/void-linux/void-packages/tree/master/srcpkgs/linux5.8. 
 
 linux_xe303c12 can be cross-compiled with [xbps-src](https://github.com/void-linux/void-packages) into voidlinux package with armv7hf-glibc or armv7hf-musl architectures.
+
+>Some compiled packages can be found at [releases](https://github.com/quarkscript/linux-armv7-xe303c12-only/releases)
