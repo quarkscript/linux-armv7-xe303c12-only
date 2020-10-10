@@ -1,6 +1,6 @@
 # Template file for 'linux_xe303c12'
 pkgname=linux_xe303c12
-version=5.8.13
+version=5.8.14
 revision=1
 wrksrc="linux-${version}"
 short_desc="Linux kernel and modules and headers (${version%.*} for XE303C12 armv7hf samsung/google-snow Chromebook)"
@@ -8,11 +8,11 @@ maintainer="none"
 license="GPL-2.0-only"
 homepage="https://www.kernel.org"
 distfiles="https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-${version}.tar.xz"
-checksum=f25936177edd183dd0645dce1d81873bcfc0bab1ff1586df75d95cd12723320d
+checksum=ee767991808d234ad9acd17f0ba94ba7979d30c528876bee6fba337ea540f0af
 python_version=3
 patch_args="-Np1"
 
-export XBPS_TARGET_CFLAGS="-march=armv7-a -mfpu=vfpv4 -mfloat-abi=hard"
+export XBPS_TARGET_CFLAGS="-march=armv7-a -mfpu=vfpv4 -mfloat-abi=hard --param l1-cache-size=64 --param l2-cache-size=1024 -faggressive-loop-optimizations -fguess-branch-probability -floop-nest-optimize -fomit-frame-pointer -fsel-sched-pipelining -fsel-sched-pipelining-outer-loops -fpredictive-commoning -ftree-loop-optimize "
 export XBPS_MAKEJOBS=$(grep 'model name' /proc/cpuinfo --count)
 
 # XXX Restrict archs until a proper <arch>-dotconfig is available in FILESDIR.
@@ -128,11 +128,11 @@ do_build() {
 
 	# force some hw-specific optimizations
 	for tmpcycle in $(find -name Makefile); do
-        	sed -i "s/armv7-a/armv7-a  --param l1-cache-size=64 --param l2-cache-size=1024 -faggressive-loop-optimizations -fguess-branch-probability -floop-nest-optimize -fomit-frame-pointer -fsel-sched-pipelining -fsel-sched-pipelining-outer-loops -fpredictive-commoning -ftree-loop-optimize /g" $tmpcycle
-        	sed -i "s/vfpv /vfpv4 /g" $tmpcycle
-        	sed -i "s/vfpv,/vfpv4,/g" $tmpcycle
-        	sed -i "s/-O2/-O2 --param l1-cache-size=64 --param l2-cache-size=1024 -faggressive-loop-optimizations -fguess-branch-probability -floop-nest-optimize -fomit-frame-pointer -fsel-sched-pipelining -fsel-sched-pipelining-outer-loops -fpredictive-commoning -ftree-loop-optimize /g" $tmpcycle
-		sed -i "s/-mfpu=neon /-mfpu=neon -funroll-loops  -floop-unroll-and-jam  /g" $tmpcycle
+        sed -i "s/armv7-a/armv7-a  --param l1-cache-size=64 --param l2-cache-size=1024 -faggressive-loop-optimizations -fguess-branch-probability -floop-nest-optimize -fomit-frame-pointer -fsel-sched-pipelining -fsel-sched-pipelining-outer-loops -fpredictive-commoning -ftree-loop-optimize /g" $tmpcycle
+        sed -i "s/vfpv /vfpv4 /g" $tmpcycle
+        sed -i "s/vfpv,/vfpv4,/g" $tmpcycle
+        sed -i "s/-O2/-O2 --param l1-cache-size=64 --param l2-cache-size=1024 -faggressive-loop-optimizations -fguess-branch-probability -floop-nest-optimize -fomit-frame-pointer -fsel-sched-pipelining -fsel-sched-pipelining-outer-loops -fpredictive-commoning -ftree-loop-optimize /g" $tmpcycle
+	#sed -i "s/-mfpu=neon /-mfpu=neon -funroll-loops  -floop-unroll-and-jam /g" $tmpcycle
 	done
 	
 	export LDFLAGS=
@@ -158,8 +158,7 @@ do_install() {
     vinstall arch/arm/boot/zImage 644 boot
     #make ${makejobs} ARCH=${subarch:-$arch} INSTALL_DTBS_PATH=${DESTDIR}/boot/dtbs/dtbs-${_kernver} dtbs_install
     make ${makejobs} ARCH=${subarch:-$arch} INSTALL_DTBS_PATH=${DESTDIR}/boot/dtbs dtbs_install
-####
-    #cd ${wrksrc}/arch/arm/boot/
+    
     cp ${FILESDIR}/kernel.its .
     cp ${FILESDIR}/kernel.keyblock .
     cp ${FILESDIR}/kernel_data_key.vbprivk .
@@ -179,8 +178,6 @@ do_install() {
     
     vinstall ${FILESDIR}/post-install 755 etc/kernel.d/post-install 10-flashkernel
     
-    #cd ${wrksrc}
-#####
 	# Switch to /usr.
 	vmkdir usr
 	mv ${DESTDIR}/lib ${DESTDIR}/usr
@@ -318,14 +315,14 @@ do_install() {
 	cp -a arch/x86/ras/Kconfig ${hdrdest}/arch/x86/ras/Kconfig
 
 	# Extract debugging symbols and compress modules
-	msg_normal "$pkgver: extracting debug info and compressing modules, please wait...\n"
-	install -Dm644 vmlinux ${DESTDIR}/usr/lib/debug/boot/vmlinux-${_kernver}
-	(
-	cd ${DESTDIR}
-	export DESTDIR
-	find ./ -name '*.ko' -print0 | \
-		xargs -0r -n1 -P ${XBPS_MAKEJOBS} ${FILESDIR}/mv-debug
-	)
+	#msg_normal "$pkgver: extracting debug info and compressing modules, please wait...\n"
+	#install -Dm644 vmlinux ${DESTDIR}/usr/lib/debug/boot/vmlinux-${_kernver}
+	#(
+	#cd ${DESTDIR}
+	#export DESTDIR
+	#find ./ -name '*.ko' -print0 | \
+#		xargs -0r -n1 -P ${XBPS_MAKEJOBS} ${FILESDIR}/mv-debug
+#	)
 	# ... and run depmod again.
 	depmod -b ${DESTDIR}/usr -F System.map ${_kernver}
 }
