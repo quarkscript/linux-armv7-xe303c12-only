@@ -5,8 +5,8 @@ pkgname=$pkgbase
 _srcname=linux-5.8
 _kernelname=${pkgbase#linux}
 _desc="ARMv7 XE303C12-platform"
-pkgver=5.8.13
-pkgrel=5
+pkgver=5.8.14
+pkgrel=1
 rcnver=5.8.5
 rcnrel=armv7-x11
 arch=('armv7h')
@@ -95,13 +95,13 @@ build() {
     sed -i "s/-O2/-O2 -march=armv7-a+mp+neon-vfpv4 --param l1-cache-size=64 --param l2-cache-size=1024 -faggressive-loop-optimizations -fguess-branch-probability -floop-nest-optimize -fomit-frame-pointer -fsel-sched-pipelining -fsel-sched-pipelining-outer-loops -fpredictive-commoning -fprefetch-loop-arrays -ftree-loop-optimize /g" $tmpcycle
   done
   
-  make ${MAKEFLAGS} -j2 zImage modules dtbs
+  make ${MAKEFLAGS}-j2  zImage modules dtbs
 }
 
 package() {
   pkgdesc="The Linux Kernel, flash image, modules and headers for samsung/google snow XE303C12 chromebook - ${_desc}"
   depends=('coreutils' 'linux-firmware' 'kmod' 'mkinitcpio>=0.7')
-  optdepends=('crda: to set the correct wireless channels of your country')
+  optdepends=('crda: to set the correct wireless channels of your country' 'linux-firmware: containe firmwares for wifi,bt (mwifiex_sdio) and s5p-mfc-codec')
   backup=("etc/mkinitcpio.d/${pkgbase}.preset")
   provides=("linux=${pkgver}" "WIREGUARD-MODULE" "linux-headers=${pkgver}" )
   conflicts=('linux' 'linux-headers' )
