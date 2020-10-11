@@ -95,7 +95,7 @@ build() {
     sed -i "s/-O2/-O2 -march=armv7-a+mp+neon-vfpv4 --param l1-cache-size=64 --param l2-cache-size=1024 -faggressive-loop-optimizations -fguess-branch-probability -floop-nest-optimize -fomit-frame-pointer -fsel-sched-pipelining -fsel-sched-pipelining-outer-loops -fpredictive-commoning -fprefetch-loop-arrays -ftree-loop-optimize /g" $tmpcycle
   done
   
-  make ${MAKEFLAGS}-j2  zImage modules dtbs
+  make ${MAKEFLAGS} -j$(grep 'model name' /proc/cpuinfo --count)  zImage modules dtbs
 }
 
 package() {
