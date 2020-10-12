@@ -1,0 +1,37 @@
+# Template file for 'xf86-video-armsoc-git'
+pkgname=xf86-video-armsoc-git
+version=1.4.1
+revision=1
+build_style=gnu-configure
+short_desc="Xorg DDX driver for ARM devices (required a linux-firmware)"
+maintainer="none"
+license="GPL-2.0"
+homepage="http://cgit.freedesktop.org/xorg/driver/xf86-video-armsoc"
+distfiles="https://gitlab.freedesktop.org/xorg/driver/xf86-video-armsoc/-/archive/master/xf86-video-armsoc-master.tar.gz"
+checksum=4d82b31f08216867582565c61aadc922efeacc6bf3ab2ddaa26b35b8b8c64c6d
+
+wrksrc="xf86-video-armsoc-master"
+export XBPS_MAKEJOBS=$(grep 'model name' /proc/cpuinfo --count)
+export XBPS_TARGET_CFLAGS="-march=armv7-a+mp+neon -mfpu=neon -mfloat-abi=hard --param l1-cache-size=64 --param l2-cache-size=1024 -faggressive-loop-optimizations -fguess-branch-probability -floop-nest-optimize -fomit-frame-pointer -fsel-sched-pipelining -fsel-sched-pipelining-outer-loops -fpredictive-commoning -ftree-loop-optimize "
+export LDFLAGS="-Wl,-z,lazy"
+
+makedepends="m4 which libXrandr-devel xorg-server-devel pkgconf pkg-config libtool automake autoconf xorg-util-macros git"
+depends="virtual?xserver-abi-video-24_1"
+
+do_configure() {
+	# apply patches in a specific way
+	cp $FILESDIR/0001-Initialize-XRandR-before-EnterVT.patch ../
+	cd $wrksrc
+	git apply ../0001-Initialize-XRandR-before-EnterVT.patch
+		rm -f ../0001-Initialize-XRandR-before-EnterVT.patch
+}
+
+do_build() {
+	cd $wrksrc
+  	export CFLAGS=${CFLAGS/-fno-plt}
+  	export CXXFLAGS=${CXXFLAGS/-fno-plt}
+  	export LDFLAGS=${LDFLAGS/-Wl,-z,now}
+  	CFLAGS=`echo $CFLAGS | sed -e 's/vfpv3-d16/neon/' | sed -e 's/vfpv3/neon/'` && CXXFLAGS="$CFLAGS"
+  	./autogen.sh --prefix=/usr
+  	make ${makejobs}
+}
