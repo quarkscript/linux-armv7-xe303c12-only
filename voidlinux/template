@@ -1,0 +1,29 @@
+# Template file for 'linux_xe303c12_firmware'
+pkgname=linux_xe303c12_firmware
+version=0.1
+revision=1
+short_desc="Linux kernel firmware required for xe303c12 chromebook only"
+maintainer="none"
+license="nonfree"
+homepage="https://www.kernel.org"
+archs="*"
+nodebug=yes  
+nostrip=yes
+noshlibprovides=yes
+preserve=yes
+
+hostmakedepends="git"
+conflicts="linux-firmware"
+
+do_install() {
+	git clone git://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git
+	
+	vinstall linux-firmware/mrvl/sd8787_uapsta.bin 644 usr/lib/firmware/mrvl/ 
+	vinstall linux-firmware/mrvl/sd8797_uapsta.bin 644 usr/lib/firmware/mrvl/ 
+	vinstall linux-firmware/mrvl/sd8897_uapsta.bin 644 usr/lib/firmware/mrvl/ 
+	vinstall linux-firmware/s5p-mfc.fw 644 usr/lib/firmware/
+	vinstall linux-firmware/s5p-mfc-v6.fw 644 usr/lib/firmware/
+	vinstall linux-firmware/s5p-mfc-v6-v2.fw 644 usr/lib/firmware/
+	vinstall linux-firmware/s5p-mfc-v7.fw 644 usr/lib/firmware/
+	vinstall linux-firmware/s5p-mfc-v8.fw 644 usr/lib/firmware/
+}
