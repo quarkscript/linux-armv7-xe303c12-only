@@ -1,12 +1,12 @@
 # forked from https://github.com/archlinuxarm/PKGBUILDs/tree/master/core/linux-armv7
 
-pkgbase=linux-armv7-xe303c12
+pkgbase=linux-xe303c12
 pkgname=$pkgbase
 _srcname=linux-5.8
 _kernelname=${pkgbase#linux}
 _desc="ARMv7 XE303C12-platform"
-pkgver=5.8.14
-pkgrel=1
+pkgver=5.8.15
+pkgrel=2
 rcnver=5.8.5
 rcnrel=armv7-x11
 arch=('armv7h')
@@ -14,6 +14,7 @@ url="http://www.kernel.org/"
 license=('GPL2')
 makedepends=('xmlto' 'docbook-xsl' 'kmod' 'inetutils' 'bc' 'git' 'uboot-tools' 'vboot-utils' 'dtc')
 options=('!strip')
+MAKEFLAGS="-j$(grep 'model name' /proc/cpuinfo --count)"
 source=("http://www.kernel.org/pub/linux/kernel/v5.x/${_srcname}.tar.xz"
         "http://www.kernel.org/pub/linux/kernel/v5.x/patch-${pkgver}.xz"
         "http://rcn-ee.com/deb/stretch-armhf/v${rcnver}-${rcnrel}/patch-${rcnver%.0}-${rcnrel}.diff.xz"
@@ -31,22 +32,7 @@ source=("http://www.kernel.org/pub/linux/kernel/v5.x/${_srcname}.tar.xz"
         'https://github.com/archlinuxarm/PKGBUILDs/raw/master/core/linux-armv7/kernel.keyblock'
         'https://github.com/archlinuxarm/PKGBUILDs/raw/master/core/linux-armv7/kernel_data_key.vbprivk'
 )
-md5sums=('SKIP'
-         'SKIP'
-         'SKIP'
-         'SKIP'
-         'SKIP'
-         'SKIP'
-         'SKIP'
-         'SKIP'
-         'SKIP'
-         'SKIP'
-         'SKIP'
-         'SKIP'
-         'SKIP'
-         'SKIP'
-         'SKIP'
-         'SKIP')
+md5sums=('SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP')
 
 prepare() {
   cd "${srcdir}/${_srcname}"
@@ -78,10 +64,11 @@ prepare() {
 }
 
 build() {
+
   cd "${srcdir}/${_srcname}"
-  make prepare
-  make menuconfig
-  ff="-O2 -pipe -fno-plt -mfloat-abi=hard -mfpu=neon-vfpv4 -pipe -fstack-protector-strong -march=armv7-a+mp+neon --param l1-cache-size=64 --param l2-cache-size=1024 -fno-strict-aliasing -faggressive-loop-optimizations -fcombine-stack-adjustments -fcprop-registers -fcrossjumping -fdce -fdelayed-branch -fdelete-dead-exceptions -fdelete-null-pointer-checks -fdse -fforward-propagate -fgcse -fgcse-after-reload -fguess-branch-probability -fif-conversion2 -fipa-sra -fira-hoist-pressure -fira-loop-pressure -fira-share-save-slots -fivopts -fjump-tables -floop-interchange -floop-nest-optimize -floop-unroll-and-jam -fmove-loop-invariants -fomit-frame-pointer -foptimize-sibling-calls -foptimize-strlen -fpeel-loops -fpeephole -fpeephole2 -fpredictive-commoning -fprefetch-loop-arrays -freg-struct-return -frename-registers -frerun-cse-after-loop -fschedule-fusion -fsel-sched-pipelining -fsel-sched-pipelining-outer-loops -fshrink-wrap-separate -fsimd-cost-model=dynamic -fsplit-ivs-in-unroller -fsplit-loops -fsplit-paths -fssa-backprop -fssa-phiopt -fstdarg-opt -fthread-jumps -ftree-bit-ccp -ftree-builtin-call-dce -ftree-ccp -ftree-cselim -ftree-dce -ftree-dominator-opts -ftree-dse -ftree-forwprop -ftree-loop-distribution -ftree-loop-optimize -ftree-loop-vectorize -ftree-pre -ftree-slp-vectorize -ftree-vectorize -funroll-loops -fvect-cost-model=dynamic "
+  make ${MAKEFLAGS} prepare
+  make ${MAKEFLAGS} menuconfig
+  ff=" -O2 -pipe -fno-plt -mfloat-abi=hard -mfpu=neon-vfpv4 -pipe -fstack-protector-strong -march=armv7-a+mp+neon --param l1-cache-size=64 --param l2-cache-size=1024 -fno-strict-aliasing -faggressive-loop-optimizations -fcombine-stack-adjustments -fcprop-registers -fcrossjumping -fdce -fdelayed-branch -fdelete-dead-exceptions -fdelete-null-pointer-checks -fdse -fforward-propagate -fgcse -fgcse-after-reload -fguess-branch-probability -fif-conversion2 -fipa-sra -fira-hoist-pressure -fira-loop-pressure -fira-share-save-slots -fivopts -fjump-tables -floop-interchange -floop-nest-optimize -floop-unroll-and-jam -fmove-loop-invariants -fomit-frame-pointer -foptimize-sibling-calls -foptimize-strlen -fpeel-loops -fpeephole -fpeephole2 -fpredictive-commoning -fprefetch-loop-arrays -freg-struct-return -frename-registers -frerun-cse-after-loop -fschedule-fusion -fsel-sched-pipelining -fsel-sched-pipelining-outer-loops -fshrink-wrap-separate -fsimd-cost-model=dynamic -fsplit-ivs-in-unroller -fsplit-loops -fsplit-paths -fssa-backprop -fssa-phiopt -fstdarg-opt -fthread-jumps -ftree-bit-ccp -ftree-builtin-call-dce -ftree-ccp -ftree-cselim -ftree-dce -ftree-dominator-opts -ftree-dse -ftree-forwprop -ftree-loop-distribution -ftree-loop-optimize -ftree-loop-vectorize -ftree-pre -ftree-slp-vectorize -ftree-vectorize -funroll-loops -fvect-cost-model=dynamic "
 #  CFLAGS+="$ff" 
 #  CXXFLAGS+="$ff"
   export CFLAGS+="$ff" 
@@ -94,18 +81,22 @@ build() {
     sed -i "s/vfpv,/vfpv4,/g" $tmpcycle
     sed -i "s/-O2/-O2 -march=armv7-a+mp+neon-vfpv4 --param l1-cache-size=64 --param l2-cache-size=1024 -faggressive-loop-optimizations -fguess-branch-probability -floop-nest-optimize -fomit-frame-pointer -fsel-sched-pipelining -fsel-sched-pipelining-outer-loops -fpredictive-commoning -fprefetch-loop-arrays -ftree-loop-optimize /g" $tmpcycle
   done
-  
-  make ${MAKEFLAGS} -j$(grep 'model name' /proc/cpuinfo --count)  zImage modules dtbs
+ 
+  #make ${MAKEFLAGS} zImage modules dtbs
+  make ${MAKEFLAGS} zImage modules exynos5250-snow.dtb exynos5250-snow-rev5.dtb
 }
 
 package() {
   pkgdesc="The Linux Kernel, flash image, modules and headers for samsung/google snow XE303C12 chromebook - ${_desc}"
-  depends=('coreutils' 'linux-firmware' 'kmod' 'mkinitcpio>=0.7')
-  optdepends=('crda: to set the correct wireless channels of your country' 'linux-firmware: containe firmwares for wifi,bt (mwifiex_sdio) and s5p-mfc-codec')
+  depends=('coreutils' 'kmod')
+  optdepends=('linux-xe303c12-firmware: contains the necessary firmwares for the xe303c12 chromebook, takes up 5M or something' 
+    'linux-firmware: contains all available firmwares, takes up 500M or something'
+    'crda: to set the correct wireless channels of your country' 
+    'mkinitcpio>=0.7: not needed for this kernel actually')
   backup=("etc/mkinitcpio.d/${pkgbase}.preset")
   provides=("linux=${pkgver}" "WIREGUARD-MODULE" "linux-headers=${pkgver}" )
   conflicts=('linux' 'linux-headers' )
-  replaces=('linux-armv7' 'linux-armv7-chromebook' 'linux-armv7-rc-chromebook'  'linux-armv7-rc' 'linux-mvebu' 'linux-udoo' 'linux-sun4i' 'linux-sun5i' 'linux-sun7i' 'linux-usbarmory' 'linux-wandboard' 'linux-clearfog' 'linux-mvebu-headers' 'linux-sun4i-headers' 'linux-sun5i-headers' 'linux-sun7i-headers' 'linux-usbarmory-headers' 'linux-wandboard-headers' 'linux-clearfog-headers' 'linux-armv7-rc-chromebook' 'linux-armv7-chromebook' 'linux-armv7-headers')
+  replaces=('linux-armv7-xe303c12' 'linux-armv7' 'linux-armv7-chromebook' 'linux-armv7-rc-chromebook'  'linux-armv7-rc' 'linux-mvebu' 'linux-udoo' 'linux-sun4i' 'linux-sun5i' 'linux-sun7i' 'linux-usbarmory' 'linux-wandboard' 'linux-clearfog' 'linux-mvebu-headers' 'linux-sun4i-headers' 'linux-sun5i-headers' 'linux-sun7i-headers' 'linux-usbarmory-headers' 'linux-wandboard-headers' 'linux-clearfog-headers' 'linux-armv7-rc-chromebook' 'linux-armv7-chromebook' 'linux-armv7-headers')
 
   cd "${srcdir}/${_srcname}"
 
@@ -117,8 +108,13 @@ package() {
   _basekernel=${_basekernel%.*}
 
   mkdir -p "${pkgdir}"/{boot,usr/lib/modules}
-  make INSTALL_MOD_PATH="${pkgdir}/usr" modules_install
-  make INSTALL_DTBS_PATH="${pkgdir}/boot/dtbs" dtbs_install
+  make ${MAKEFLAGS} INSTALL_MOD_PATH="${pkgdir}/usr" modules_install
+  
+  # make INSTALL_DTBS_PATH="${pkgdir}/boot/dtbs" dtbs_install
+  # custom builded dtb will be installed manually
+  install -D arch/$KARCH/boot/dts/exynos5250-snow.dtb -m755 "${pkgdir}/boot/dtbs/exynos5250-snow.dtb"
+  install -D arch/$KARCH/boot/dts/exynos5250-snow-rev5.dtb -m755 "${pkgdir}/boot/dtbs/exynos5250-snow-rev5.dtb"
+  
   cp arch/$KARCH/boot/zImage "${pkgdir}/boot/zImage"
 
   # make room for external modules
@@ -135,7 +131,7 @@ package() {
   # now we call depmod...
   depmod -b "${pkgdir}/usr" -F System.map "${_kernver}"
 
-
+## gen kernel flash script
 echo 'flash_kernel() {
   krnprts=""
   krnprtc=0
@@ -152,7 +148,7 @@ echo 'flash_kernel() {
   
   echo ""
   if [ "$krnprtc" -eq 0 ]; then
-    echo "ChromeOs kernel partition did not detected." 
+    echo "Chrome OS kernel partition did not detected." 
     echo "You must reflash kernel manually."
   elif [ "$krnprtc" -eq 1 ]; then
     echo "Finded ChromeOs kernel partition - $krnprts"
@@ -166,7 +162,7 @@ echo 'flash_kernel() {
       echo "dd if=/boot/vmlinux.kpart of=/dev/$krnprts"
     fi
   else
-    echo "Finded more than one ChromeOs kernel partition."
+    echo "Finded more than one Chrome OS kernel partition."
     echo "You need to select next action
     "
     echo "0 for do not flash"
@@ -176,7 +172,7 @@ echo 'flash_kernel() {
       echo "$numpart for flash $i partition"
     done
     echo ""
-    echo "Wrong partition may lead to bootfail or disk fail. Be aware!"
+    echo "Wrong partition may lead to bootfail. Be aware!"
     read -r shouldwe
     if [ $shouldwe -gt 0 ]&&[ $shouldwe -le $numpart ]; then
       numpart=0
@@ -206,7 +202,7 @@ post_remove() {
   
 true && install=${pkgbase}.pkg   
 
-# install mkinitcpio preset file...
+## install mkinitcpio preset file...
 echo "# mkinitcpio preset file for the '${pkgbase}' package
 
 #ALL_config='/etc/mkinitcpio.conf'
@@ -248,11 +244,8 @@ Exec = /usr/bin/depmod ${_kernver}
 # Exec = /usr/bin/mkinitcpio -p ${pkgbase}
 # " | install -Dm644 /dev/stdin "${pkgdir}/usr/share/libalpm/hooks/90-${pkgbase}.hook"
 
-
 ## include headers
-
-
- cd "${srcdir}/${_srcname}"
+  cd "${srcdir}/${_srcname}"
   local _builddir="${pkgdir}/usr/lib/modules/${_kernver}/build"
 
   install -Dt "${_builddir}" -m644 Makefile .config Module.symvers
@@ -320,12 +313,8 @@ Exec = /usr/bin/depmod ${_kernver}
     /usr/bin/strip ${_strip} "${_binary}"
   done < <(find "${_builddir}/scripts" -type f -perm -u+w -print0 2>/dev/null)
 
-
 ## include kernel flash image
-
-
-cd "${srcdir}/${_srcname}"
-
+  cd "${srcdir}/${_srcname}"
   cp ../kernel.its .
   mkimage -D "-I dts -O dtb -p 2048" -f kernel.its vmlinux.uimg
   dd if=/dev/zero of=bootloader.bin bs=512 count=1
@@ -340,6 +329,5 @@ cd "${srcdir}/${_srcname}"
     --config cmdline \
     --bootloader bootloader.bin
   #mkdir -p "${pkgdir}/boot"
-  cp vmlinux.kpart "${pkgdir}/boot"    
-    
+  cp vmlinux.kpart "${pkgdir}/boot"       
 }
