@@ -22,3 +22,5 @@ The same, but for void-linux. Second forked source is [void-packages](https://gi
 > Some already builded packages can be found at [releases](https://github.com/quarkscript/linux-armv7-xe303c12-only/releases)
 
 > Be aware! Given scripts or packages are not officially supported by any mentioned Linux distributions.
+
+> Based on archlinux|ARM recovery/install [disk image for xe303c12](https://drive.google.com/file/d/1Zg2Xno8FbVB8HYyStyqff15vGbTW5XPZ/view?usp=sharing)
