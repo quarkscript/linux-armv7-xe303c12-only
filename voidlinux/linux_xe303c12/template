@@ -1,6 +1,6 @@
 # Template file for 'linux_xe303c12'
 pkgname=linux_xe303c12
-version=5.8.14
+version=5.9.8
 revision=1
 wrksrc="linux-${version}"
 short_desc="Linux kernel and modules and headers (${version%.*} for XE303C12 armv7hf samsung/google-snow Chromebook)"
@@ -8,7 +8,7 @@ maintainer="none"
 license="GPL-2.0-only"
 homepage="https://www.kernel.org"
 distfiles="https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-${version}.tar.xz"
-checksum=ee767991808d234ad9acd17f0ba94ba7979d30c528876bee6fba337ea540f0af
+checksum=7656733b316562662026ac82a7c0be41440e16bbf1bdc5447b119e34ff3b86a6
 python_version=3
 patch_args="-Np1"
 
@@ -48,7 +48,7 @@ mutable_files="
 
 do_configure() {
 	# 5.8 misses Documentation/DocBook. We ship the directory from 4.12 here.
-	cp -a $FILESDIR/DocBook -t Documentation
+	# cp -a $FILESDIR/DocBook -t Documentation
 
 	# If there's a file called <arch>-dotconfig, use it to
 	# configure the kernel; otherwise use arch defaults and all stuff
@@ -57,36 +57,15 @@ do_configure() {
 	
 	# apply patches in a specific way
 
-	cp $FILESDIR/patch-5.8.5-armv7-x11.diff.patch ../
-	git apply ../patch-5.8.5-armv7-x11.diff.patch
+	cp $FILESDIR/patch-5.9.1-armv7-x11.diff ../
+	git apply ../patch-5.9.1-armv7-x11.diff
 		rm -f ../patch-5.8.5-armv7-x11.diff.patch
-	cp $FILESDIR/0001-ARM-atags-add-support-for-Marvell-s-u-boot.patch ../
-	git apply ../0001-ARM-atags-add-support-for-Marvell-s-u-boot.patch
-		rm -f ../0001-ARM-atags-add-support-for-Marvell-s-u-boot.patch
-	cp $FILESDIR/0002-ARM-atags-fdt-retrieve-MAC-addresses-from-Marvell-bo.patch ../
-	git apply ../0002-ARM-atags-fdt-retrieve-MAC-addresses-from-Marvell-bo.patch
-		rm -f ../0002-ARM-atags-fdt-retrieve-MAC-addresses-from-Marvell-bo.patch
-	cp $FILESDIR/0003-SMILE-Plug-device-tree-file.patch ../
-	git apply ../0003-SMILE-Plug-device-tree-file.patch
-		rm -f ../0003-SMILE-Plug-device-tree-file.patch
 	cp $FILESDIR/0004-fix-mvsdio-eMMC-timing.patch ../
 	git apply ../0004-fix-mvsdio-eMMC-timing.patch
 		rm -f ../0004-fix-mvsdio-eMMC-timing.patch
 	cp $FILESDIR/0005-net-smsc95xx-Allow-mac-address-to-be-set-as-a-parame.patch ../
 	git apply ../0005-net-smsc95xx-Allow-mac-address-to-be-set-as-a-parame.patch
 		rm -f ../0005-net-smsc95xx-Allow-mac-address-to-be-set-as-a-parame.patch
-	cp $FILESDIR/0006-set-default-cubietruck-led-triggers.patch ../
-	git apply ../0006-set-default-cubietruck-led-triggers.patch
-		rm -f ../0006-set-default-cubietruck-led-triggers.patch
-	cp $FILESDIR/0007-exynos4412-odroid-set-higher-minimum-buck2-regulator.patch ../
-	git apply ../0007-exynos4412-odroid-set-higher-minimum-buck2-regulator.patch
-		rm -f ../0007-exynos4412-odroid-set-higher-minimum-buck2-regulator.patch
-	cp $FILESDIR/0008-ARM-dove-enable-ethernet-on-D3Plug.patch ../
-	git apply ../0008-ARM-dove-enable-ethernet-on-D3Plug.patch
-		rm -f ../0008-ARM-dove-enable-ethernet-on-D3Plug.patch
-	cp $FILESDIR/0009-USB-Armory-MkII-support.patch ../
-	git apply ../0009-USB-Armory-MkII-support.patch
-		rm -f ../0009-USB-Armory-MkII-support.patch
 
 	arch=arm
 
@@ -164,7 +143,7 @@ do_install() {
     cp ${FILESDIR}/kernel_data_key.vbprivk .
     mkimage -D "-I dts -O dtb -p 2048" -f kernel.its vmlinux.uimg
     dd if=/dev/zero of=bootloader.bin bs=512 count=1
-    echo 'console=tty0 init=/usr/bin/runit-init root=PARTUUID=%U/PARTNROFF=1 rootwait rw noinitrd zswap.compressor=zstd zswap.max_pool_percent=40' > cmdline
+    echo 'console=tty0 init=/usr/bin/runit-init root=PARTUUID=%U/PARTNROFF=1 rootwait rw noinitrd zswap.compressor=zstd zswap.max_pool_percent=40 audit=0' > cmdline
     vbutil_kernel \
         --pack vmlinux.kpart \
         --version 1 \
@@ -265,8 +244,8 @@ do_install() {
 	done
 
 	# Add docbook makefile
-	install -Dm644 Documentation/DocBook/Makefile \
-		${hdrdest}/Documentation/DocBook/Makefile
+	# install -Dm644 Documentation/DocBook/Makefile \
+	#	${hdrdest}/Documentation/DocBook/Makefile
 
 	# Add md headers
 	mkdir -p ${hdrdest}/drivers/md
