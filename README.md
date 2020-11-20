@@ -23,4 +23,4 @@ The same, but for void-linux. Second forked source is [void-packages](https://gi
 
 > Be aware! Given scripts or packages are not officially supported by any mentioned Linux distributions.
 
-> Based on archlinux|ARM recovery/install [disk image for xe303c12](https://drive.google.com/file/d/1Zg2Xno8FbVB8HYyStyqff15vGbTW5XPZ/view?usp=sharing)
+> Based on archlinux|ARM recovery/install [disk image for xe303c12](https://drive.google.com/file/d/17X-DlPpTQlipDR5Z5uZ29qQr8UXBKZED/view?usp=sharing)
