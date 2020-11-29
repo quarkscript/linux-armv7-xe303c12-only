@@ -23,4 +23,6 @@ The same, but for void-linux. Second forked source is [void-packages](https://gi
 
 > Be aware! Given scripts or packages are not officially supported by any mentioned Linux distributions.
 
+> Known issue: void-linux glibc may fail to flash kernel, the cause may be a damaged cgpt from vboot-utils; as a solution you may flash kernel manually like 'dd if=/boot/vmlinux.kpart of=/dev/[mmcblk0p1 or mmcblk1p1 or sda1 etc.]'.
+
 > Based on archlinux|ARM recovery/install [disk image for xe303c12](https://drive.google.com/file/d/17X-DlPpTQlipDR5Z5uZ29qQr8UXBKZED/view?usp=sharing)
