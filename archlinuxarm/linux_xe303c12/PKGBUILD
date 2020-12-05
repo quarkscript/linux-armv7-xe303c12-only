@@ -5,7 +5,7 @@ pkgname=$pkgbase
 _srcname=linux-5.9
 _kernelname=${pkgbase#linux}
 _desc="ARMv7 XE303C12-platform"
-pkgver=5.9.8
+pkgver=5.9.12
 pkgrel=1
 rcnver=5.9.1
 rcnrel=armv7-x11
@@ -25,7 +25,7 @@ source=("http://www.kernel.org/pub/linux/kernel/v5.x/${_srcname}.tar.xz"
         'https://github.com/archlinuxarm/PKGBUILDs/raw/master/core/linux-armv7/kernel.keyblock'
         'https://github.com/archlinuxarm/PKGBUILDs/raw/master/core/linux-armv7/kernel_data_key.vbprivk'
 )
-md5sums=('SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP')
+md5sums=('SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP')
 
 prepare() {
   cd "${srcdir}/${_srcname}"
