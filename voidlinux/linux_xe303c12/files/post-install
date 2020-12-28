@@ -2,7 +2,7 @@
 
   krnprts=""
   krnprtc=0
-  for i in $(ls /dev | grep -x --regexp="mmcblk[0-9]" --regexp="sd[a-z]"); do
+  for i in $(ls /dev | grep -x --regexp="mmcblk[0-9]" --regexp="sd[a-z]" --regexp="vd[a-z]"); do
     if $(cgpt show /dev/$i | grep Label | grep -q [Kk]ernel); then
       if $(echo $i | grep -q mmcblk); then
         krnprts+="$i""p$(cgpt show /dev/$i | grep Label | grep [Kk]ernel -m 1 | sed 's/  / /g' | sed 's/  / /g' | sed 's/ La.*//g' | sed 's/.* //g') "
