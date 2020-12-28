@@ -23,8 +23,8 @@ The same, but for void-linux. Second forked source is [void-packages](https://gi
 
 > Be aware! Given scripts or packages are not officially supported by any mentioned Linux distributions.
 
-> Based on archlinux|ARM recovery/install [disk image for xe303c12](https://drive.google.com/file/d/17X-DlPpTQlipDR5Z5uZ29qQr8UXBKZED/view?usp=sharing) You may run it under hypervisor like:
+> Based on archlinux|ARM recovery/install [disk image for xe303c12](https://drive.google.com/file/d/17X-DlPpTQlipDR5Z5uZ29qQr8UXBKZED/view?usp=sharing) ( [untested disk image](https://drive.google.com/file/d/1O94t7i_gBygdlDLsbyp9D8q7T425sgpM/view?usp=sharing) ) You may run it under hypervisor like:
 
->qemu-system-arm -machine virt -m 1024 -kernel zImage -append "root=/dev/vda2" -serial stdio -drive if=none,file=armv7hf.img,format=raw,id=hd0 -device virtio-blk-device,drive=hd0 -netdev user,id=net0 -device virtio-net-device,netdev=net0
+>qemu-system-arm -machine virt -m 1024 -kernel zImage -append "root=/dev/vda2" -serial stdio -drive if=none,file=armv7hf.img,format=raw,id=hd0 -device virtio-blk-device,drive=hd0 -netdev user,id=net0 -device virtio-net-device,netdev=net0 
 
 > but that is requires a kernel with virtio drivers
