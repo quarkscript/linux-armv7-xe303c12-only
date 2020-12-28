@@ -4,15 +4,16 @@ pkgbase=linux-xe303c12
 pkgname=$pkgbase
 _kernelname=${pkgbase#linux}
 _desc="ARMv7 XE303C12-platform"
-pkgver=5.9.16
+pkgver=5.10.3
 _srcname=linux-${pkgver}
-pkgrel=1
-rcnver=5.9.1
-rcnrel=armv7-x11
+pkgrel=3
+rcnver=5.10.2
+#rcnrel=armv7-x11
+rcnrel=armv7-x9
 arch=('armv7h')
 url="http://www.kernel.org/"
 license=('GPL2')
-makedepends=('xmlto' 'docbook-xsl' 'kmod' 'inetutils' 'bc' 'git' 'uboot-tools' 'vboot-utils' 'dtc')
+makedepends=('xmlto' 'docbook-xsl' 'kmod' 'inetutils' 'bc' 'git' 'uboot-tools' 'vboot-utils' 'dtc' 'flex' 'make' 'gcc' 'fakeroot' 'bison')
 options=('!strip')
 MAKEFLAGS="-j$(grep 'model name' /proc/cpuinfo --count)"
 source=("http://www.kernel.org/pub/linux/kernel/v5.x/${_srcname}.tar.xz"
@@ -38,7 +39,7 @@ prepare() {
 
   # ALARM patches
   git apply ../0004-fix-mvsdio-eMMC-timing.patch
-  git apply ../0005-net-smsc95xx-Allow-mac-address-to-be-set-as-a-parame.patch
+#  git apply ../0005-net-smsc95xx-Allow-mac-address-to-be-set-as-a-parame.patch
 
   cat "${srcdir}/config" > ./.config
 
@@ -121,7 +122,7 @@ package() {
 echo 'flash_kernel() {
   krnprts=""
   krnprtc=0
-  for i in $(ls /dev | grep -x --regexp="mmcblk[0-9]" --regexp="sd[a-z]"); do
+  for i in $(ls /dev | grep -x --regexp="mmcblk[0-9]" --regexp="sd[a-z]" --regexp="vd[a-z]"); do
     if $(cgpt show /dev/$i | grep Label | grep -q [Kk]ernel); then
       if $(echo $i | grep -q mmcblk); then
         krnprts+="$i""p$(cgpt show /dev/$i | grep Label | grep [Kk]ernel -m 1 | sed '"'"'s/  / /g'"'"' | sed '"'"'s/  / /g'"'"' | sed '"'"'s/ La.*//g'"'"' | sed '"'"'s/.* //g'"'"') "
@@ -231,6 +232,12 @@ Exec = /usr/bin/depmod ${_kernver}
 # " | install -Dm644 /dev/stdin "${pkgdir}/usr/share/libalpm/hooks/90-${pkgbase}.hook"
 
 ## include headers
+
+  #for i in $(ls include/); do
+  #  cp -a include/${i} "${pkgdir}/usr/lib/modules/${_kernver}/build/include/"
+  #done
+
+
   cd "${srcdir}/${_srcname}"
   local _builddir="${pkgdir}/usr/lib/modules/${_kernver}/build"
 
@@ -242,14 +249,14 @@ Exec = /usr/bin/depmod ${_kernver}
   cp -t "${_builddir}" -a include scripts
 
   install -Dt "${_builddir}/arch/${KARCH}" -m644 arch/${KARCH}/Makefile
-  install -Dt "${_builddir}/arch/${KARCH}/kernel" -m644 arch/${KARCH}/kernel/asm-offsets.s arch/$KARCH/kernel/module.lds
+ # install -Dt "${_builddir}/arch/${KARCH}/kernel" -m644 arch/${KARCH}/kernel/asm-offsets.s arch/$KARCH/kernel/module.lds
 
   cp -t "${_builddir}/arch/${KARCH}" -a arch/${KARCH}/include
   for i in dove exynos omap2; do
     mkdir -p "${_builddir}/arch/${KARCH}/mach-${i}"
-    cp -t "${_builddir}/arch/${KARCH}/mach-${i}" -a arch/$KARCH/mach-${i}/include
+    #cp -t "${_builddir}/arch/${KARCH}/mach-${i}" -a arch/$KARCH/mach-${i}/include
   done
-  for i in omap orion samsung versatile; do
+  for i in omap orion versatile; do
     mkdir -p "${_builddir}/arch/${KARCH}/plat-${i}"
     cp -t "${_builddir}/arch/${KARCH}/plat-${i}" -a arch/$KARCH/plat-${i}/include
   done
