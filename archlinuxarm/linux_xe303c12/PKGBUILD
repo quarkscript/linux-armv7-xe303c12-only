@@ -4,9 +4,9 @@ pkgbase=linux-xe303c12
 pkgname=$pkgbase
 _kernelname=${pkgbase#linux}
 _desc="ARMv7 XE303C12-platform"
-pkgver=5.10.3
+pkgver=5.10.8
 _srcname=linux-${pkgver}
-pkgrel=3
+pkgrel=1
 rcnver=5.10.2
 #rcnrel=armv7-x11
 rcnrel=armv7-x9
@@ -20,13 +20,12 @@ source=("http://www.kernel.org/pub/linux/kernel/v5.x/${_srcname}.tar.xz"
 #        "http://www.kernel.org/pub/linux/kernel/v5.x/patch-${pkgver}.xz"
         "http://rcn-ee.com/deb/stretch-armhf/v${rcnver}-${rcnrel}/patch-${rcnver%.0}-${rcnrel}.diff.xz"
         'https://raw.githubusercontent.com/archlinuxarm/PKGBUILDs/master/core/linux-armv7/0004-fix-mvsdio-eMMC-timing.patch'
-        'https://raw.githubusercontent.com/archlinuxarm/PKGBUILDs/master/core/linux-armv7/0005-net-smsc95xx-Allow-mac-address-to-be-set-as-a-parame.patch'
         'config'
         'kernel.its'
         'https://github.com/archlinuxarm/PKGBUILDs/raw/master/core/linux-armv7/kernel.keyblock'
         'https://github.com/archlinuxarm/PKGBUILDs/raw/master/core/linux-armv7/kernel_data_key.vbprivk'
 )
-md5sums=('SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' ) #'SKIP')
+md5sums=('SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' ) #'SKIP')
 
 prepare() {
   cd "${srcdir}/${_srcname}"
