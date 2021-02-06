@@ -23,7 +23,32 @@ The same, but for void-linux. Second forked source is [void-packages](https://gi
 
 > Be aware! Given scripts or packages are not officially supported by any mentioned Linux distributions.
 
-> Based on archlinux|ARM recovery/install [disk image for xe303c12](https://drive.google.com/file/d/17X-DlPpTQlipDR5Z5uZ29qQr8UXBKZED/view?usp=sharing) 
 
-> You may run it under hypervisor but that is requires a kernel with virtio drivers (could be extracted from [disk image](https://drive.google.com/file/d/1O94t7i_gBygdlDLsbyp9D8q7T425sgpM/view?usp=sharing) or last release)  `qemu-system-arm -machine virt -m 1024 -kernel zImage -append "root=/dev/vda2" -serial stdio -drive if=none,file=armv7hf.img,format=raw,id=hd0 -device virtio-blk-device,drive=hd0 -netdev user,id=net0 -device virtio-net-device,netdev=net0 `
-> ![](example.gif)
+#### Recovery/install disk image
+- based on archlinux|ARM 
+  - [xe303c12 baremetal](https://drive.google.com/file/d/17X-DlPpTQlipDR5Z5uZ29qQr8UXBKZED/view?usp=sharing) 
+  - [xe303c12 baremetal + virtio drivers](https://drive.google.com/file/d/1O94t7i_gBygdlDLsbyp9D8q7T425sgpM/view?usp=sharing)
+
+
+#### Example of run under hypervisor (qemu)
+```
+qemu-system-arm -machine virt -m 1024 -kernel zImage -append "root=/dev/vda2" -serial stdio -drive if=none,file=armv7hf_q.img,format=raw,id=hd0 -device virtio-blk-device,drive=hd0 -netdev user,id=net0 -device virtio-net-device,netdev=net0 
+```
+![](example.gif)
+> zImage could be extracted from disk image or from [5.10.3](https://github.com/quarkscript/linux-armv7-xe303c12-only/releases/tag/5.10.3-xe303c12) (or last release)
+
+#### Example of cross-compiling void-linux kernel 
+from [archlinux x86_64](https://archlinux.org/) with [xbps](https://aur.archlinux.org/packages/xbps/) installed 
+``` 
+git clone https://github.com/quarkscript/linux-armv7-xe303c12-only.git
+git clone git://github.com/void-linux/void-packages.git
+cd void-packages/
+# copy linux_xe303c12 to src-dir
+cp -fr ../linux-armv7-xe303c12-only/voidlinux/linux_xe303c12 srcpkgs/
+./xbps-src binary-bootstrap
+./xbps-src -a armv7hf build linux_xe303c12
+./xbps-src -a armv7hf pkg linux_xe303c12
+./xbps-src -m x86_64-musl binary-bootstrap x86_64-musl
+./xbps-src -m x86_64-musl -a armv7hf-musl build linux_xe303c12
+./xbps-src -m x86_64-musl -a armv7hf-musl pkg linux_xe303c12 
+```
