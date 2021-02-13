@@ -52,3 +52,8 @@ cp -fr ../linux-armv7-xe303c12-only/voidlinux/linux_xe303c12 srcpkgs/
 ./xbps-src -m x86_64-musl -a armv7hf-musl build linux_xe303c12
 ./xbps-src -m x86_64-musl -a armv7hf-musl pkg linux_xe303c12 
 ```
+
+#### Kali linux
+To try Kali on that device you may use official build script from Kali developers at gitlab 
+
+or [my old mod of that script](https://github.com/quarkscript/xe303c12_play_linux)
