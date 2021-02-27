@@ -4,7 +4,7 @@ pkgbase=linux-xe303c12
 pkgname=$pkgbase
 _kernelname=${pkgbase#linux}
 _desc="ARMv7 XE303C12-platform"
-pkgver=5.10.13
+pkgver=5.10.19
 _srcname=linux-${pkgver}
 pkgrel=1
 rcnver=5.10.2
@@ -65,6 +65,7 @@ build() {
     sed -i "s/armv7-a/armv7-a+mp+neon-vfpv4  --param l1-cache-size=64 --param l2-cache-size=1024 -faggressive-loop-optimizations -fguess-branch-probability -floop-nest-optimize -fomit-frame-pointer -fsel-sched-pipelining -fsel-sched-pipelining-outer-loops -fpredictive-commoning -fprefetch-loop-arrays -ftree-loop-optimize /g" $tmpcycle
     sed -i "s/vfpv /vfpv4 /g" $tmpcycle
     sed -i "s/vfpv,/vfpv4,/g" $tmpcycle
+    sed -i "s/-Os/-O2/g" $tmpcycle
     sed -i "s/-O2/-O2 -march=armv7-a+mp+neon-vfpv4 --param l1-cache-size=64 --param l2-cache-size=1024 -faggressive-loop-optimizations -fguess-branch-probability -floop-nest-optimize -fomit-frame-pointer -fsel-sched-pipelining -fsel-sched-pipelining-outer-loops -fpredictive-commoning -fprefetch-loop-arrays -ftree-loop-optimize /g" $tmpcycle
   done
  
