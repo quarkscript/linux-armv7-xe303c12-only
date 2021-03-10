@@ -146,7 +146,7 @@ echo 'flash_kernel() {
       sync
     else
       echo "You may flash kernel manually like:"
-      echo "dd if=/boot/vmlinux.kpart_ of=/dev/$krnprts"
+      echo "dd if=/boot/vmlinux.kpart of=/dev/$krnprts"
     fi
   else
     echo "Finded more than one Chrome OS kernel partition."
@@ -267,11 +267,11 @@ Will be used vmlinux.kpart from package."
         echo $bootcmd > /tmp/cmdline
         
         # backup default vmlinux.kpart
-        mv -f /boot/vmlinux.kpart_ /boot/backup_vmlinux.kpart
+        mv -f /boot/vmlinux.kpart /boot/backup_vmlinux.kpart
         
         # final step
         vbutil_kernel \
-        --pack /boot/vmlinux.kpart_ \
+        --pack /boot/vmlinux.kpart \
         --version 1 \
         --vmlinuz /tmp/vmlinux.uimg \
         --arch arm \
