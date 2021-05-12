@@ -1,6 +1,6 @@
 # Template file for 'linux_xe303c12'
 pkgname=linux_xe303c12
-version=5.11.15
+version=5.12.3
 revision=1
 wrksrc="linux-${version}"
 short_desc="Linux kernel and modules and headers (${version%.*} for XE303C12 armv7hf samsung/google-snow Chromebook)"
@@ -8,7 +8,7 @@ maintainer="none"
 license="GPL-2.0-only"
 homepage="https://www.kernel.org"
 distfiles="https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-${version}.tar.xz"
-checksum=d6a7845357cf56b695e50b4c60e09a8832b651ac701062a76145550a8e77c44a
+checksum=133714a87a8b0ed1959587a8a5aff9faf47dd0fc8feeac08cca408f7e392878d
 python_version=3
 patch_args="-Np1"
 
@@ -25,7 +25,7 @@ noshlibprovides=yes
 preserve=yes
 
 hostmakedepends="tar xz bc elfutils-devel flex gmp-devel kmod libmpc-devel
-libressl-devel perl uboot-mkimage vboot-utils dtc cpio pahole git"
+libressl-devel perl uboot-mkimage-2020.10_1 vboot-utils dtc cpio pahole git"
 
 depends+="vboot-utils uboot-mkimage"
  
@@ -57,9 +57,9 @@ do_configure() {
 	
 	# apply patches in a specific way
 
-	cp $FILESDIR/5.11.2-armv7-x11.diff ../
-	echo $(git apply ../5.11.2-armv7-x11.diff)
-		rm -f ../5.11.2-armv7-x11.diff
+	cp $FILESDIR/5.12.1-armv7-x12.diff ../
+	echo $(git apply ../5.12.1-armv7-x12.diff)
+		rm -f ../5.12.1-armv7-x12.diff
 	cp $FILESDIR/0004-fix-mvsdio-eMMC-timing.patch ../
 	git apply ../0004-fix-mvsdio-eMMC-timing.patch
 		rm -f ../0004-fix-mvsdio-eMMC-timing.patch
