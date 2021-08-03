@@ -28,6 +28,7 @@ The same, but for void-linux. Second forked source is [void-packages](https://gi
 - based on archlinux|ARM 
   - [xe303c12 baremetal](https://drive.google.com/file/d/17X-DlPpTQlipDR5Z5uZ29qQr8UXBKZED/view?usp=sharing) 
   - [xe303c12 baremetal + virtio drivers](https://drive.google.com/file/d/1O94t7i_gBygdlDLsbyp9D8q7T425sgpM/view?usp=sharing)
+  - [kernel 5.13.6 +xorg +xfce4 +firefox](https://drive.google.com/u/0/uc?id=1fuvSD4JI4uHUUmsGSx2-tupWola-BXJo&export=download)
 
 
 #### Example of run under hypervisor (qemu)
