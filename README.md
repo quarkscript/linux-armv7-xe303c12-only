@@ -39,7 +39,7 @@ qemu-system-arm -machine virt -m 1024 -kernel zImage -append "root=/dev/vda2" -s
 > zImage could be extracted from disk image or from [5.10.3](https://github.com/quarkscript/linux-armv7-xe303c12-only/releases/tag/5.10.3-xe303c12) (or last release)
 
 #### Example of cross-compiling void-linux kernel 
-from [archlinux x86_64](https://archlinux.org/) with [xbps](https://aur.archlinux.org/packages/xbps/) installed 
+from [archlinux x86_64](https://archlinux.org/) 
 ``` 
 git clone https://github.com/quarkscript/linux-armv7-xe303c12-only.git
 git clone git://github.com/void-linux/void-packages.git
