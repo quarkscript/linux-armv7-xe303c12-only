@@ -1,40 +1,25 @@
 pkgbase=linux-xe303c12-firmware
 pkgname=$pkgbase
-pkgver=1.0
+pkgver=$(date -Idate | sed 's/-/./g')
 pkgrel=1
 arch=('armv7h')
 url="http://www.kernel.org/"
 license=('nonfree')
-makedepends=('git')
-
-prepare() {
-  git clone git://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git
-}
+makedepends=('curl')
 
 package() {
   pkgdesc="The Linux Kernel Firmware for samsung/google snow XE303C12 chromebook"
   provides=("linux-xe303c12-firmware")
-  
-  ## do not replace linux-firmware
-  install -D ${srcdir}/linux-firmware/mrvl/sd8787_uapsta.bin -m644 ${pkgdir}/usr/lib/firmware/updates/mrvl/sd8787_uapsta.bin 
-  install -D ${srcdir}/linux-firmware/mrvl/sd8797_uapsta.bin -m644 ${pkgdir}/usr/lib/firmware/updates/mrvl/sd8797_uapsta.bin 
-  install -D ${srcdir}/linux-firmware/mrvl/sd8897_uapsta.bin -m644 ${pkgdir}/usr/lib/firmware/updates/mrvl/sd8897_uapsta.bin 
-  install -D ${srcdir}/linux-firmware/s5p-mfc.fw -m644 ${pkgdir}/usr/lib/firmware/updates/s5p-mfc.fw
-  install -D ${srcdir}/linux-firmware/s5p-mfc-v6.fw -m644 ${pkgdir}/usr/lib/firmware/updates/s5p-mfc-v6.fw
-  install -D ${srcdir}/linux-firmware/s5p-mfc-v6-v2.fw -m644 ${pkgdir}/usr/lib/firmware/updates/s5p-mfc-v6-v2.fw
-  install -D ${srcdir}/linux-firmware/s5p-mfc-v7.fw -m644 ${pkgdir}/usr/lib/firmware/updates/s5p-mfc-v7.fw
-  install -D ${srcdir}/linux-firmware/s5p-mfc-v8.fw -m644 ${pkgdir}/usr/lib/firmware/updates/s5p-mfc-v8.fw
-  
-  ## replace linux-firmware
-  #conflicts=('linux-firmware')
-  #replaces=('linux-firmware')
-  #install -D ${srcdir}/linux-firmware/mrvl/sd8787_uapsta.bin -m644 ${pkgdir}/usr/lib/firmware/mrvl/sd8787_uapsta.bin 
-  #install -D ${srcdir}/linux-firmware/mrvl/sd8797_uapsta.bin -m644 ${pkgdir}/usr/lib/firmware/mrvl/sd8797_uapsta.bin 
-  #install -D ${srcdir}/linux-firmware/mrvl/sd8897_uapsta.bin -m644 ${pkgdir}/usr/lib/firmware/mrvl/sd8897_uapsta.bin 
-  #install -D ${srcdir}/linux-firmware/s5p-mfc.fw -m644 ${pkgdir}/usr/lib/firmware/s5p-mfc.fw
-  #install -D ${srcdir}/linux-firmware/s5p-mfc-v6.fw -m644 ${pkgdir}/usr/lib/firmware/s5p-mfc-v6.fw
-  #install -D ${srcdir}/linux-firmware/s5p-mfc-v6-v2.fw -m644 ${pkgdir}/usr/lib/firmware/s5p-mfc-v6-v2.fw
-  #install -D ${srcdir}/linux-firmware/s5p-mfc-v7.fw -m644 ${pkgdir}/usr/lib/firmware/s5p-mfc-v7.fw
-  #install -D ${srcdir}/linux-firmware/s5p-mfc-v8.fw -m644 ${pkgdir}/usr/lib/firmware/s5p-mfc-v8.fw
 
-}
+  mkdir -p ${pkgdir}/usr/lib/firmware/updates
+  curl -o ${pkgdir}/usr/lib/firmware/updates/s5p-mfc.fw https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/plain/s5p-mfc.fw
+  curl -o ${pkgdir}/usr/lib/firmware/updates/s5p-mfc-v6-v2.fw https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/plain/s5p-mfc-v6-v2.fw
+  curl -o ${pkgdir}/usr/lib/firmware/updates/s5p-mfc-v6.fw https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/plain/s5p-mfc-v6.fw
+  curl -o ${pkgdir}/usr/lib/firmware/updates/s5p-mfc-v7.fw https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/plain/s5p-mfc-v7.fw
+  curl -o ${pkgdir}/usr/lib/firmware/updates/s5p-mfc-v8.fw https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/plain/s5p-mfc-v8.fw
+  mkdir -p ${pkgdir}/usr/lib/firmware/updates/mrvl
+  curl -o ${pkgdir}/usr/lib/firmware/updates/mrvl/sd8787_uapsta.bin https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/plain/mrvl/sd8787_uapsta.bin
+  curl -o ${pkgdir}/usr/lib/firmware/updates/mrvl/sd8797_uapsta.bin https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/plain/mrvl/sd8797_uapsta.bin
+  curl -o ${pkgdir}/usr/lib/firmware/updates/mrvl/sd8897_uapsta.bin https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/plain/mrvl/sd8897_uapsta.bin
+  
+  }
