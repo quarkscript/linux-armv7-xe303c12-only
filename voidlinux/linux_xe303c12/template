@@ -1,6 +1,6 @@
 # Template file for 'linux_xe303c12'
 pkgname=linux_xe303c12
-version=5.13.12
+version=5.13.13
 revision=1
 wrksrc="linux-${version}"
 short_desc="Linux kernel and modules and headers (${version%.*} for XE303C12 armv7hf samsung/google-snow Chromebook)"
@@ -8,11 +8,11 @@ maintainer="none"
 license="GPL-2.0-only"
 homepage="https://www.kernel.org"
 distfiles="https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-${version}.tar.xz"
-checksum=28b15d248f7a926e47b7218a503b9b20b6ef9ec51232603aa2163fc17ee08824
+checksum=5531d2200c7923c377ef2e0fb7fc44d892e3dabf302961d790c9bd1df3c83434
 python_version=3
 patch_args="-Np1"
 
-export XBPS_TARGET_CFLAGS=" -O2 -march=armv7-a -pipe -fno-plt -mfloat-abi=hard -mfpu=neon-vfpv4 -pipe -fstack-protector-strong --param l1-cache-size=64 --param l2-cache-size=1024 -fno-strict-aliasing -faggressive-loop-optimizations -fcombine-stack-adjustments -fcprop-registers -fcrossjumping -fdce -fdelayed-branch -fdelete-dead-exceptions -fdelete-null-pointer-checks -fdse -fforward-propagate -fgcse -fgcse-after-reload -fguess-branch-probability -fif-conversion2 -fipa-sra -fira-hoist-pressure -fira-loop-pressure -fira-share-save-slots -fivopts -fjump-tables -floop-interchange -floop-nest-optimize -floop-unroll-and-jam -fmove-loop-invariants -fomit-frame-pointer -foptimize-sibling-calls -foptimize-strlen -fpeel-loops -fpeephole -fpeephole2 -fpredictive-commoning -fprefetch-loop-arrays -freg-struct-return -frename-registers -frerun-cse-after-loop -fschedule-fusion -fsel-sched-pipelining -fsel-sched-pipelining-outer-loops -fshrink-wrap-separate -fsimd-cost-model=dynamic -fsplit-ivs-in-unroller -fsplit-loops -fsplit-paths -fssa-backprop -fssa-phiopt -fstdarg-opt -fthread-jumps -ftree-bit-ccp -ftree-builtin-call-dce -ftree-ccp -ftree-cselim -ftree-dce -ftree-dominator-opts -ftree-dse -ftree-forwprop -ftree-loop-distribution -ftree-loop-optimize -ftree-loop-vectorize -ftree-pre -ftree-slp-vectorize -ftree-vectorize -funroll-loops -fvect-cost-model=dynamic "
+export XBPS_TARGET_CFLAGS=" -O2 -pipe -march=armv7-a -mfpu=neon-vfpv4 --param l1-cache-size=64 --param l2-cache-size=1024 -fno-plt -fno-strict-aliasing -faggressive-loop-optimizations -floop-interchange -floop-unroll-and-jam -fpeel-loops -fpredictive-commoning -fsplit-loops -fsplit-paths -funswitch-loops -fvect-cost-model=dynamic -fversion-loops-for-strides -ftree-loop-optimize "
 export XBPS_MAKEJOBS=$(grep 'model name' /proc/cpuinfo --count)
 
 # XXX Restrict archs until a proper <arch>-dotconfig is available in FILESDIR.
@@ -104,11 +104,11 @@ do_build() {
 
 	# force some hw-specific optimizations
 	for tmpcycle in $(find -name Makefile); do
-        sed -i "s/armv7-a/armv7-a --param l1-cache-size=64 --param l2-cache-size=1024 -faggressive-loop-optimizations -fguess-branch-probability -floop-nest-optimize -fomit-frame-pointer -fsel-sched-pipelining -fsel-sched-pipelining-outer-loops -fpredictive-commoning -fprefetch-loop-arrays -ftree-loop-optimize /g" $tmpcycle
-    sed -i "s/vfpv /vfpv4 /g" $tmpcycle
-    sed -i "s/vfpv,/vfpv4,/g" $tmpcycle
-    sed -i "s/-Os/-O2/g" $tmpcycle
-    sed -i "s/-O2/-O2 --param l1-cache-size=64 --param l2-cache-size=1024 -faggressive-loop-optimizations -fguess-branch-probability -floop-nest-optimize -fomit-frame-pointer -fsel-sched-pipelining -fsel-sched-pipelining-outer-loops -fpredictive-commoning -fprefetch-loop-arrays -ftree-loop-optimize /g" $tmpcycle
+        sed -i "s/armv7-a/armv7-a -O2 --param l1-cache-size=64 --param l2-cache-size=1024 -fno-plt -mfpu=neon-vfpv4 -faggressive-loop-optimizations -floop-interchange -floop-unroll-and-jam -fpeel-loops -fpredictive-commoning -fsplit-loops -fsplit-paths -funswitch-loops -fvect-cost-model=dynamic -fversion-loops-for-strides -ftree-loop-optimize /g" $tmpcycle
+        sed -i "s/vfpv /vfpv4 /g" $tmpcycle
+        sed -i "s/vfpv,/vfpv4,/g" $tmpcycle
+        sed -i "s/-Os/-O2/g" $tmpcycle
+        sed -i "s/-O2/-O2 --param l1-cache-size=64 --param l2-cache-size=1024 -fno-plt -faggressive-loop-optimizations  -floop-interchange -floop-unroll-and-jam -fpeel-loops -fpredictive-commoning -fsplit-loops -fsplit-paths -funswitch-loops -fvect-cost-model=dynamic -fversion-loops-for-strides -ftree-loop-optimize /g" $tmpcycle
 	done
 	
 	export LDFLAGS=
