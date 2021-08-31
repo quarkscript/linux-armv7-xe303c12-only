@@ -4,9 +4,9 @@ pkgbase=linux-xe303c12
 pkgname=$pkgbase
 _kernelname=${pkgbase#linux}
 _desc="ARMv7 XE303C12-platform"
-pkgver=5.13.12
+pkgver=5.13.13
 _srcname=linux-${pkgver}
-pkgrel=2
+pkgrel=3
 rcnver=5.13.2
 rcnrel=armv7-x11
 arch=('armv7h')
@@ -16,6 +16,7 @@ makedepends=('xmlto' 'docbook-xsl' 'kmod' 'inetutils' 'bc' 'git' 'uboot-tools' '
 options=('!strip')
 MAKEFLAGS="-j$(grep 'model name' /proc/cpuinfo --count)"
 source=("http://www.kernel.org/pub/linux/kernel/v5.x/${_srcname}.tar.xz"
+#        "http://www.kernel.org/pub/linux/kernel/v5.x/patch-${pkgver}.xz"
         "http://rcn-ee.com/deb/stretch-armhf/v${rcnver}-${rcnrel}/patch-${rcnver%.0}-${rcnrel}.diff.xz"
         'https://raw.githubusercontent.com/archlinuxarm/PKGBUILDs/master/core/linux-armv7/0004-fix-mvsdio-eMMC-timing.patch'
         'config'
@@ -23,10 +24,13 @@ source=("http://www.kernel.org/pub/linux/kernel/v5.x/${_srcname}.tar.xz"
         'https://github.com/archlinuxarm/PKGBUILDs/raw/master/core/linux-armv7/kernel.keyblock'
         'https://github.com/archlinuxarm/PKGBUILDs/raw/master/core/linux-armv7/kernel_data_key.vbprivk'
 )
-md5sums=('SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' )
+md5sums=('SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' 'SKIP' ) #'SKIP')
 
 prepare() {
   cd "${srcdir}/${_srcname}"
+
+  # add upstream patch
+  #git apply --whitespace=nowarn ../patch-${pkgver}
 
   # RCN patch
   git apply ../patch-${rcnver%.0}-${rcnrel}.diff
@@ -49,18 +53,25 @@ build() {
   make ${MAKEFLAGS} prepare
   make ${MAKEFLAGS} menuconfig
 
-  ff=" -O2 -pipe -march=armv7-a+mp+neon-vfpv4 -mtune=cortex-a15 --param l1-cache-size=64 --param l2-cache-size=1024 -mfpu=neon-vfpv4 -fno-plt -fno-strict-aliasing -faggressive-loop-optimizations -fcombine-stack-adjustments -fcprop-registers -fcrossjumping -fdce -fdelayed-branch -fdelete-dead-exceptions -fdelete-null-pointer-checks -fdse -fforward-propagate -fgcse -fgcse-after-reload -fguess-branch-probability -fif-conversion2 -fipa-sra -fira-hoist-pressure -fira-loop-pressure -fira-share-save-slots -fivopts -fjump-tables -floop-interchange -floop-nest-optimize -floop-unroll-and-jam -fmove-loop-invariants -fomit-frame-pointer -foptimize-sibling-calls -foptimize-strlen -fpeel-loops -fpeephole -fpeephole2 -fpredictive-commoning -fprefetch-loop-arrays -freg-struct-return -frename-registers -frerun-cse-after-loop -fschedule-fusion -fsel-sched-pipelining -fsel-sched-pipelining-outer-loops -fshrink-wrap-separate -fsimd-cost-model=dynamic -fsplit-ivs-in-unroller -fsplit-loops -fsplit-paths -fssa-backprop -fssa-phiopt -fstdarg-opt -fthread-jumps -ftree-bit-ccp -ftree-builtin-call-dce -ftree-ccp -ftree-cselim -ftree-dce -ftree-dominator-opts -ftree-dse -ftree-forwprop -ftree-loop-distribution -ftree-loop-optimize -ftree-loop-vectorize -ftree-pre -ftree-slp-vectorize -ftree-vectorize -funroll-loops -fvect-cost-model=dynamic"
+  ff=" -O2 -pipe -march=armv7-a+mp+neon-vfpv4 -mtune=cortex-a15 --param l1-cache-size=64 --param l2-cache-size=1024 -mfloat-abi=hard -mfpu=neon-vfpv4 -mfloat-abi=hard -fno-plt -fno-strict-aliasing -faggressive-loop-optimizations -floop-interchange -floop-unroll-and-jam -fpeel-loops -fpredictive-commoning -fsplit-loops -fsplit-paths -funswitch-loops -fvect-cost-model=dynamic -fversion-loops-for-strides -ftree-loop-optimize "
 
   export CFLAGS+="$ff" 
   export CXXFLAGS+="$ff"
   
   echo force custom flags
   for tmpcycle in $(find -name Makefile); do
-    sed -i "s/armv7-a/armv7-a+mp+neon-vfpv4 -mtune=cortex-a15 --param l1-cache-size=64 --param l2-cache-size=1024 -mfpu=neon-vfpv4 -fno-plt -faggressive-loop-optimizations -fguess-branch-probability -floop-nest-optimize -fomit-frame-pointer -fsel-sched-pipelining -fsel-sched-pipelining-outer-loops -fpredictive-commoning -fprefetch-loop-arrays -ftree-loop-optimize/g" $tmpcycle
+    sed -i "s/armv7-a/armv7-a+mp+neon-vfpv4 -O2 -mtune=cortex-a15 --param l1-cache-size=64 --param l2-cache-size=1024 -mfpu=neon-vfpv4 -fno-plt -faggressive-loop-optimizations -floop-interchange -floop-unroll-and-jam -fpeel-loops -fpredictive-commoning -fsplit-loops -fsplit-paths -funswitch-loops -fvect-cost-model=dynamic -fversion-loops-for-strides -ftree-loop-optimize /g" $tmpcycle
     sed -i "s/vfpv /vfpv4 /g" $tmpcycle
     sed -i "s/vfpv,/vfpv4,/g" $tmpcycle
     sed -i "s/-Os/-O2/g" $tmpcycle
-    sed -i "s/-O2/-O2 -march=armv7-a+mp+neon-vfpv4 -mtune=cortex-a15 --param l1-cache-size=64 --param l2-cache-size=1024 -mfpu=neon-vfpv4 -fno-plt -faggressive-loop-optimizations -fguess-branch-probability -floop-nest-optimize -fomit-frame-pointer -fsel-sched-pipelining -fsel-sched-pipelining-outer-loops -fpredictive-commoning -fprefetch-loop-arrays -ftree-loop-optimize /g" $tmpcycle
+    sed -i "s/-O2/-O2 -march=armv7-a+mp+neon-vfpv4 -mtune=cortex-a15 --param l1-cache-size=64 --param l2-cache-size=1024 -mfpu=neon-vfpv4 -fno-plt -faggressive-loop-optimizations  -floop-interchange -floop-unroll-and-jam -fpeel-loops -fpredictive-commoning -fsplit-loops -fsplit-paths -funswitch-loops -fvect-cost-model=dynamic -fversion-loops-for-strides -ftree-loop-optimize /g" $tmpcycle
+
+# -fguess-branch-probability -floop-nest-optimize -fomit-frame-pointer -fsel-sched-pipelining -fsel-sched-pipelining-outer-loops -fpredictive-commoning -ftree-loop-optimize -floop-interchange -floop-unroll-and-jam -fpeel-loops -fpredictive-commoning -fsplit-loops -fsplit-paths -funswitch-loops -fversion-loops-for-strides
+
+# -floop-interchange -floop-unroll-and-jam -fpeel-loops -fpredictive-commoning -fsplit-loops -fsplit-path -funswitch-loops -fvect-cost-model=dynamic -fversion-loops-for-strides -ftree-loop-optimize
+
+# old flags -faggressive-loop-optimizations -fguess-branch-probability -floop-nest-optimize -fomit-frame-pointer -fsel-sched-pipelining -fsel-sched-pipelining-outer-loops -fpredictive-commoning -fprefetch-loop-arrays -ftree-loop-optimize
+
   done
  
   make ${MAKEFLAGS} zImage modules exynos5250-snow.dtb exynos5250-snow-rev5.dtb
@@ -75,8 +86,8 @@ package() {
     'mkinitcpio>=0.7: not needed for this kernel actually')
   backup=("etc/mkinitcpio.d/${pkgbase}.preset")
   provides=("linux=${pkgver}" "WIREGUARD-MODULE" "linux-headers=${pkgver}" )
-  conflicts=('linux' 'linux-headers' )
-  replaces=('linux-armv7' 'linux-armv7-chromebook' 'linux-armv7-rc-chromebook' 'linux-armv7-rc' 'linux-armv7-rc-chromebook' 'linux-armv7-headers' 'linux-armv7-chromebook-headers' 'linux-armv7-rc-chromebook-headers' 'linux-armv7-rc-headers' 'linux-armv7-rc-chromebook-headers')
+#  conflicts=('linux' 'linux-headers' )
+#  replaces=('linux-armv7' 'linux-armv7-chromebook' 'linux-armv7-rc-chromebook' 'linux-armv7-rc' 'linux-armv7-rc-chromebook' 'linux-armv7-headers' 'linux-armv7-chromebook-headers' 'linux-armv7-rc-chromebook-headers' 'linux-armv7-rc-headers' 'linux-armv7-rc-chromebook-headers')
 
   cd "${srcdir}/${_srcname}"
 
