@@ -12,9 +12,10 @@ checksum=4d82b31f08216867582565c61aadc922efeacc6bf3ab2ddaa26b35b8b8c64c6d
 
 wrksrc="xf86-video-armsoc-master"
 export XBPS_MAKEJOBS=$(grep 'model name' /proc/cpuinfo --count)
-export XBPS_TARGET_CFLAGS="-march=armv7-a+mp+neon -mfpu=neon -mfloat-abi=hard --param l1-cache-size=64 --param l2-cache-size=1024 -faggressive-loop-optimizations -fguess-branch-probability -floop-nest-optimize -fomit-frame-pointer -fsel-sched-pipelining -fsel-sched-pipelining-outer-loops -fpredictive-commoning -ftree-loop-optimize "
+export XBPS_TARGET_CFLAGS=" -O2 --param l1-cache-size=64 --param l2-cache-size=1024 -faggressive-loop-optimizations -fguess-branch-probability -floop-nest-optimize -fomit-frame-pointer -fsel-sched-pipelining -fsel-sched-pipelining-outer-loops -fpredictive-commoning -ftree-loop-optimize "
 export LDFLAGS="-Wl,-z,lazy"
 
+hostmakedepends="git m4 which libXrandr-devel xorg-server-devel pkgconf pkg-config libtool automake autoconf xorg-util-macros"
 makedepends="m4 which libXrandr-devel xorg-server-devel pkgconf pkg-config libtool automake autoconf xorg-util-macros git"
 depends="virtual?xserver-abi-video-24_1"
 
@@ -32,6 +33,10 @@ do_build() {
   	export CXXFLAGS=${CXXFLAGS/-fno-plt}
   	export LDFLAGS=${LDFLAGS/-Wl,-z,now}
   	CFLAGS=`echo $CFLAGS | sed -e 's/vfpv3-d16/neon/' | sed -e 's/vfpv3/neon/'` && CXXFLAGS="$CFLAGS"
-  	./autogen.sh --prefix=/usr
+  	if $(uname -m | grep -vq armv7l); then
+        ./autogen.sh --prefix=/usr --host=armv7l-linux-gnueabihf --target=armv7l-linux-gnueabihf --build=$(uname -m | sed 's/ //g')-linux-gnu
+    else
+        ./autogen.sh --prefix=/usr 
+    fi
   	make ${makejobs}
 }
