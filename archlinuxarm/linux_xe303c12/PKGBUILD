@@ -6,7 +6,7 @@ _kernelname=${pkgbase#linux}
 _desc="ARMv7 XE303C12-platform"
 pkgver=5.13.13
 _srcname=linux-${pkgver}
-pkgrel=3
+pkgrel=8
 rcnver=5.13.2
 rcnrel=armv7-x11
 arch=('armv7h')
@@ -16,7 +16,6 @@ makedepends=('xmlto' 'docbook-xsl' 'kmod' 'inetutils' 'bc' 'git' 'uboot-tools' '
 options=('!strip')
 MAKEFLAGS="-j$(grep 'model name' /proc/cpuinfo --count)"
 source=("http://www.kernel.org/pub/linux/kernel/v5.x/${_srcname}.tar.xz"
-#        "http://www.kernel.org/pub/linux/kernel/v5.x/patch-${pkgver}.xz"
         "http://rcn-ee.com/deb/stretch-armhf/v${rcnver}-${rcnrel}/patch-${rcnver%.0}-${rcnrel}.diff.xz"
         'https://raw.githubusercontent.com/archlinuxarm/PKGBUILDs/master/core/linux-armv7/0004-fix-mvsdio-eMMC-timing.patch'
         'config'
@@ -53,24 +52,18 @@ build() {
   make ${MAKEFLAGS} prepare
   make ${MAKEFLAGS} menuconfig
 
-  ff=" -O2 -pipe -march=armv7-a+mp+neon-vfpv4 -mtune=cortex-a15 --param l1-cache-size=64 --param l2-cache-size=1024 -mfloat-abi=hard -mfpu=neon-vfpv4 -mfloat-abi=hard -fno-plt -fno-strict-aliasing -faggressive-loop-optimizations -floop-interchange -floop-unroll-and-jam -fpeel-loops -fpredictive-commoning -fsplit-loops -fsplit-paths -funswitch-loops -fvect-cost-model=dynamic -fversion-loops-for-strides -ftree-loop-optimize "
+  ff=" -O2 -pipe -march=armv7-a+mp+neon-vfpv4 -mtune=cortex-a15 --param l1-cache-size=64 --param l2-cache-size=1024 -mfpu=neon-vfpv4 -fno-plt -faggressive-loop-optimizations -fguess-branch-probability -floop-nest-optimize -fomit-frame-pointer -fsel-sched-pipelining -fsel-sched-pipelining-outer-loops -fpredictive-commoning -fprefetch-loop-arrays -ftree-loop-optimize -floop-interchange -floop-unroll-and-jam -fpeel-loops -funswitch-loops -fvect-cost-model=dynamic -fsimd-cost-model=dynamic -fsplit-ivs-in-unroller -ftree-loop-ivcanon -ftree-loop-im "
 
   export CFLAGS+="$ff" 
   export CXXFLAGS+="$ff"
   
-  echo force custom flags
+  echo force custom gcc flags
   for tmpcycle in $(find -name Makefile); do
-    sed -i "s/armv7-a/armv7-a+mp+neon-vfpv4 -O2 -mtune=cortex-a15 --param l1-cache-size=64 --param l2-cache-size=1024 -mfpu=neon-vfpv4 -fno-plt -faggressive-loop-optimizations -floop-interchange -floop-unroll-and-jam -fpeel-loops -fpredictive-commoning -fsplit-loops -fsplit-paths -funswitch-loops -fvect-cost-model=dynamic -fversion-loops-for-strides -ftree-loop-optimize /g" $tmpcycle
+    sed -i "s/armv7-a/armv7-a+mp+neon-vfpv4 -mtune=cortex-a15 --param l1-cache-size=64 --param l2-cache-size=1024 -mfpu=neon-vfpv4 -fno-plt -faggressive-loop-optimizations -fguess-branch-probability -floop-nest-optimize -fomit-frame-pointer -fsel-sched-pipelining -fsel-sched-pipelining-outer-loops -fpredictive-commoning -fprefetch-loop-arrays -ftree-loop-optimize -floop-interchange -floop-unroll-and-jam -fpeel-loops -funswitch-loops -fvect-cost-model=dynamic -fsimd-cost-model=dynamic -fsplit-ivs-in-unroller -ftree-loop-ivcanon -ftree-loop-im /g" $tmpcycle
     sed -i "s/vfpv /vfpv4 /g" $tmpcycle
     sed -i "s/vfpv,/vfpv4,/g" $tmpcycle
     sed -i "s/-Os/-O2/g" $tmpcycle
-    sed -i "s/-O2/-O2 -march=armv7-a+mp+neon-vfpv4 -mtune=cortex-a15 --param l1-cache-size=64 --param l2-cache-size=1024 -mfpu=neon-vfpv4 -fno-plt -faggressive-loop-optimizations  -floop-interchange -floop-unroll-and-jam -fpeel-loops -fpredictive-commoning -fsplit-loops -fsplit-paths -funswitch-loops -fvect-cost-model=dynamic -fversion-loops-for-strides -ftree-loop-optimize /g" $tmpcycle
-
-# -fguess-branch-probability -floop-nest-optimize -fomit-frame-pointer -fsel-sched-pipelining -fsel-sched-pipelining-outer-loops -fpredictive-commoning -ftree-loop-optimize -floop-interchange -floop-unroll-and-jam -fpeel-loops -fpredictive-commoning -fsplit-loops -fsplit-paths -funswitch-loops -fversion-loops-for-strides
-
-# -floop-interchange -floop-unroll-and-jam -fpeel-loops -fpredictive-commoning -fsplit-loops -fsplit-path -funswitch-loops -fvect-cost-model=dynamic -fversion-loops-for-strides -ftree-loop-optimize
-
-# old flags -faggressive-loop-optimizations -fguess-branch-probability -floop-nest-optimize -fomit-frame-pointer -fsel-sched-pipelining -fsel-sched-pipelining-outer-loops -fpredictive-commoning -fprefetch-loop-arrays -ftree-loop-optimize
+    sed -i "s/-O2/-O2 -march=armv7-a+mp+neon-vfpv4 -mtune=cortex-a15 --param l1-cache-size=64 --param l2-cache-size=1024 -mfpu=neon-vfpv4 -fno-plt -faggressive-loop-optimizations -fguess-branch-probability -floop-nest-optimize -fomit-frame-pointer -fsel-sched-pipelining -fsel-sched-pipelining-outer-loops -fpredictive-commoning -fprefetch-loop-arrays -ftree-loop-optimize -floop-interchange -floop-unroll-and-jam -fpeel-loops -funswitch-loops -fvect-cost-model=dynamic -fsimd-cost-model=dynamic -fsplit-ivs-in-unroller -ftree-loop-ivcanon -ftree-loop-im /g" $tmpcycle
 
   done
  
@@ -107,115 +100,52 @@ package() {
   install -D arch/$KARCH/boot/dts/exynos5250-snow-rev5.dtb -m755 "${pkgdir}/boot/dtbs/exynos5250-snow-rev5.dtb"
   
   cp arch/$KARCH/boot/zImage "${pkgdir}/boot/zImage"
-
-  # make room for external modules
-  local _extramodules="extramodules-${_basekernel}${_kernelname}"
-  ln -s "../${_extramodules}" "${pkgdir}/usr/lib/modules/${_kernver}/extramodules"
-
-  # add real version for building modules and running depmod from hook
-  echo "${_kernver}" |
-    install -Dm644 /dev/stdin "${pkgdir}/usr/lib/modules/${_extramodules}/version"
-
-  # remove build and source links
-  rm "${pkgdir}"/usr/lib/modules/${_kernver}/{source,build}
-
-  # now we call depmod...
-  depmod -b "${pkgdir}/usr" -F System.map "${_kernver}"
-
-## gen kernel flash script
-echo 'flash_kernel() {
-  krnprts=""
-  krnprtc=0
-  for i in $(ls /dev | grep -x --regexp="mmcblk[0-9]" --regexp="sd[a-z]" --regexp="vd[a-z]"); do
-    if $(cgpt show /dev/$i | grep Label | grep -q [Kk]ernel); then
-      if $(echo $i | grep -q mmcblk); then
-        krnprts+="$i""p$(cgpt show /dev/$i | grep Label | grep [Kk]ernel -m 1 | sed '"'"'s/  / /g'"'"' | sed '"'"'s/  / /g'"'"' | sed '"'"'s/ La.*//g'"'"' | sed '"'"'s/.* //g'"'"') "
-      else
-        krnprts+="$i$(cgpt show /dev/$i | grep Label | grep [Kk]ernel -m 1 | sed '"'"'s/  / /g'"'"' | sed '"'"'s/  / /g'"'"' | sed '"'"'s/ La.*//g'"'"' | sed '"'"'s/.* //g'"'"') "
-      fi
-      krnprtc=$(($krnprtc+1))
-    fi
-  done
   
-  echo ""
-  if [ "$krnprtc" -eq 0 ]; then
-    echo "Chrome OS kernel partition did not detected." 
-    echo "You must reflash kernel manually."
-  elif [ "$krnprtc" -eq 1 ]; then
-    echo "Finded ChromeOs kernel partition - $krnprts"
-    echo "Do you want to flash a new kernel to it? (y/n)"
-    read -r shouldwe
-    if [[ $shouldwe =~ ^([yY][eE][sS]|[yY])$ ]]; then
-      dd if=/boot/vmlinux.kpart of=/dev/$krnprts
-      sync
-    else
-      echo "You may flash kernel manually like:"
-      echo "dd if=/boot/vmlinux.kpart of=/dev/$krnprts"
-    fi
-  else
-    echo "Finded more than one Chrome OS kernel partition."
-    echo "You need to select next action
-    "
-    echo "0 for do not flash"
-    numpart=0
-    for i in $krnprts; do
-      numpart=$(($numpart+1))
-      echo "$numpart for flash $i partition"
-    done
-    echo ""
-    echo "Wrong partition may lead to bootfail. Be aware!"
-    read -r shouldwe
-    if [ $shouldwe -gt 0 ]&&[ $shouldwe -le $numpart ]; then
-      numpart=0
-      for i in $krnprts; do
-        numpart=$(($numpart+1))
-        if [ $numpart -eq $shouldwe ]; then
-          dd if=/boot/vmlinux.kpart of=/dev/$i
-          sync
-        fi
-      done
-    fi
-  fi
-}
+  mkdir -p "${pkgdir}"/boot/reflash
+  cp ${srcdir}/kernel.keyblock ${pkgdir}/boot/reflash/kernel.keyblock
+  cp ${srcdir}/kernel_data_key.vbprivk ${pkgdir}/boot/reflash/kernel_data_key.vbprivk
+  echo '#!/bin/bash
+if [ "$(whoami)" == "root" ]; then
 
-custom_resign(){
-    echo "
+# resign kernel
+
+echo "
 You may re-sign kernel and customize kernel boot string. 
-It require active internet connection. 
 Regular user do not need it, so it is safe to press n.
 Do you want to do this? (y/n)
 "
-    read -r tmpvar1 
-    if $(echo $tmpvar1 | grep -q [Yy]); then
-        bootcmd='"'console=tty0 init=/sbin/init root=PARTUUID=%U/PARTNROFF=1 rootwait rw noinitrd zswap.compressor=zstd zswap.max_pool_percent=40 audit=0'"'
-        echo "default bootcmd is
-        
+read -r tmpvar1 
+if $(echo $tmpvar1 | grep -q [Yy]); then
+    bootcmd='"'console=tty0 init=/sbin/init root=PARTUUID=%U/PARTNROFF=1 rootwait rw noinitrd zswap.compressor=zstd zswap.max_pool_percent=40 audit=0'"'
+    echo "default bootcmd is
+
 $bootcmd
 
 Be very careful, without init=/sbin/init root=PARTUUID=%U/PARTNROFF=1 
 or something like that your could get a bootfail.
 Now you may specify a new one or just press Enter"
-        tmpvar2=""
-        read -r tmpvar2
-        if [ ! -z "$tmpvar2" ]; then
-            bootcmd="$tmpvar2"
-        else
-    	    echo "There is no sense to re-sign completly same kernel, this operation aborted. 
-Will be used vmlinux.kpart from package."
-    	    return
-        fi
-        
-        # make kernel.its
-        echo '"'"'
-/dts-v1/;
+    tmpvar2=""
+    read -r tmpvar2
+    if [ ! -z "$tmpvar2" ]; then
+        bootcmd="$tmpvar2"
+        dnt=0
+    else
+        echo "There is no sense to re-sign with empty string or completly same kernel, 
+this operation aborted. Will be used untouched kernel.img."
+        dnt=1
+    fi
 
+    if [ "$dnt" -eq 0 ]; then
+    # make kernel.its
+    echo '"'"'
+/dts-v1/;
 / {
     description = "Chrome OS kernel image with one or more FDT blobs";
     #address-cells = <1>;
     images {
         kernel@1 {
             description = "kernel";
-            data = /incbin/("/boot/zImage_");
+            data = /incbin/("/boot/zImage");
             type = "kernel_noload";
             arch = "arm";
             os = "linux";
@@ -260,47 +190,118 @@ Will be used vmlinux.kpart from package."
         
         #
         mkimage -D "-I dts -O dtb -p 2048" -f /tmp/kernel.its /tmp/vmlinux.uimg
-        
-        # download required files
-        curl -o "/tmp/kernel.keyblock" "https://raw.githubusercontent.com/archlinuxarm/PKGBUILDs/master/core/linux-armv7/kernel.keyblock"
-        curl -o "/tmp/kernel_data_key.vbprivk" "https://raw.githubusercontent.com/archlinuxarm/PKGBUILDs/master/core/linux-armv7/kernel_data_key.vbprivk"
                 
         # make empty bootloader
         dd if=/dev/zero of=/tmp/bootloader.bin bs=512 count=1
         
         echo $bootcmd > /tmp/cmdline
         
-        # backup default vmlinux.kpart
-        mv -f /boot/vmlinux.kpart /boot/backup_vmlinux.kpart
+        # backup default kernel.img
+        mv -f /boot/kernel.img /boot/backup_kernel.img
         
         # final step
         vbutil_kernel \
-        --pack /boot/vmlinux.kpart \
+        --pack /boot/kernel.img \
         --version 1 \
         --vmlinuz /tmp/vmlinux.uimg \
         --arch arm \
-        --keyblock /tmp/kernel.keyblock \
-        --signprivate /tmp/kernel_data_key.vbprivk \
+        --keyblock /boot/reflash/kernel.keyblock \
+        --signprivate /boot/reflash/kernel_data_key.vbprivk \
         --config /tmp/cmdline \
         --bootloader /tmp/bootloader.bin
         
         # clear used files
-        rm -f /tmp/vmlinux.uimg /tmp/kernel.keyblock /tmp/kernel_data_key.vbprivk /tmp/cmdline /tmp/bootloader.bin
+        rm -f /tmp/vmlinux.uimg /tmp/cmdline /tmp/bootloader.bin
     fi
-}
+fi
 
+# flash kernel
+
+  krnprts=""
+  krnprtc=0
+  for i in $(ls /dev | grep -x --regexp="mmcblk[0-9]" --regexp="sd[a-z]" --regexp="vd[a-z]"); do
+    if $(cgpt show /dev/$i | grep Label | grep -q [Kk]ernel); then
+      if $(echo $i | grep -q mmcblk); then
+        krnprts+="$i""p$(cgpt show /dev/$i | grep Label | grep [Kk]ernel -m 1 | sed '"'"'s/  / /g'"'"' | sed '"'"'s/  / /g'"'"' | sed '"'"'s/ La.*//g'"'"' | sed '"'"'s/.* //g'"'"') "
+      else
+        krnprts+="$i$(cgpt show /dev/$i | grep Label | grep [Kk]ernel -m 1 | sed '"'"'s/  / /g'"'"' | sed '"'"'s/  / /g'"'"' | sed '"'"'s/ La.*//g'"'"' | sed '"'"'s/.* //g'"'"') "
+      fi
+      krnprtc=$(($krnprtc+1))
+    fi
+  done
+  
+  echo ""
+  if [ "$krnprtc" -eq 0 ]; then
+    echo "Chrome OS kernel partition did not detected." 
+    echo "You must reflash kernel manually."
+  elif [ "$krnprtc" -eq 1 ]; then
+    echo "Finded ChromeOs kernel partition - $krnprts"
+    echo "Do you want to flash a new kernel to it? (y/n)"
+    read -r shouldwe
+    if [[ $shouldwe =~ ^([yY][eE][sS]|[yY])$ ]]; then
+      dd if=/boot/kernel.img of=/dev/$krnprts
+      sync
+    else
+      echo "You may flash kernel manually like:"
+      echo "dd if=/boot/kernel.img of=/dev/$krnprts"
+    fi
+  else
+    echo "Finded more than one Chrome OS kernel partition."
+    echo "You need to select next action
+    "
+    echo "0 for do not flash"
+    numpart=0
+    for i in $krnprts; do
+      numpart=$(($numpart+1))
+      echo "$numpart for flash $i partition"
+    done
+    echo ""
+    echo "Wrong partition may lead to bootfail. Be aware!"
+    read -r shouldwe
+    if [ $shouldwe -gt 0 ]&&[ $shouldwe -le $numpart ]; then
+      numpart=0
+      for i in $krnprts; do
+        numpart=$(($numpart+1))
+        if [ $numpart -eq $shouldwe ]; then
+          dd if=/boot/kernel.img of=/dev/$i
+          sync
+        fi
+      done
+    fi
+  fi
+else
+  echo superuser rights required
+fi' > ${pkgdir}/boot/reflash/kerninst
+  chmod +x ${pkgdir}/boot/reflash/kerninst
+
+  # make room for external modules
+  local _extramodules="extramodules-${_basekernel}${_kernelname}"
+  ln -s "../${_extramodules}" "${pkgdir}/usr/lib/modules/${_kernver}/extramodules"
+
+  # add real version for building modules and running depmod from hook
+  echo "${_kernver}" |
+    install -Dm644 /dev/stdin "${pkgdir}/usr/lib/modules/${_extramodules}/version"
+
+  # remove build and source links
+  rm "${pkgdir}"/usr/lib/modules/${_kernver}/{source,build}
+
+  # now we call depmod...
+  depmod -b "${pkgdir}/usr" -F System.map "${_kernver}"
+
+## gen kernel flash script
+echo '
 post_install () {
-  custom_resign
-  flash_kernel
+  /boot/reflash/kerninst
+  echo you may repeat this operations by runing /boot/reflash/kerninst
 }
 post_upgrade() {
-  custom_resign
-  flash_kernel
+  /boot/reflash/kerninst
+  echo you may repeat this operations by runing /boot/reflash/kerninst
 }
 
 post_remove() {
   rm -f boot/initramfs-linux.img
-  rm -f boot/backup_vmlinux.kpart
+  rm -f boot/backup_kernel.img
 }
 ' >../../${pkgbase}.pkg
   
@@ -430,7 +431,7 @@ Exec = /usr/bin/depmod ${_kernver}
   dd if=/dev/zero of=bootloader.bin bs=512 count=1
   echo 'console=tty0 init=/sbin/init root=PARTUUID=%U/PARTNROFF=1 rootwait rw noinitrd zswap.compressor=zstd zswap.max_pool_percent=40 audit=0' > cmdline
   vbutil_kernel \
-    --pack vmlinux.kpart \
+    --pack kernel.img \
     --version 1 \
     --vmlinuz vmlinux.uimg \
     --arch arm \
@@ -439,5 +440,5 @@ Exec = /usr/bin/depmod ${_kernver}
     --config cmdline \
     --bootloader bootloader.bin
   #mkdir -p "${pkgdir}/boot"
-  cp vmlinux.kpart "${pkgdir}/boot"       
+  cp kernel.img "${pkgdir}/boot"       
 }
