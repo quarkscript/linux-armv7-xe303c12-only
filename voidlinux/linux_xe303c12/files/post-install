@@ -31,7 +31,7 @@ Now you may specify a new one or just press Enter"
     images {
         kernel@1 {
             description = "kernel";
-            data = /incbin/("/boot/zImage_");
+            data = /incbin/("/boot/zImage");
             type = "kernel_noload";
             arch = "arm";
             os = "linux";
