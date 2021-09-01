@@ -12,7 +12,7 @@ checksum=5531d2200c7923c377ef2e0fb7fc44d892e3dabf302961d790c9bd1df3c83434
 python_version=3
 patch_args="-Np1"
 
-export XBPS_TARGET_CFLAGS=" -O2 -pipe -march=armv7-a -mfpu=neon-vfpv4 --param l1-cache-size=64 --param l2-cache-size=1024 -fno-plt -fno-strict-aliasing -faggressive-loop-optimizations -floop-interchange -floop-unroll-and-jam -fpeel-loops -fpredictive-commoning -fsplit-loops -fsplit-paths -funswitch-loops -fvect-cost-model=dynamic -fversion-loops-for-strides -ftree-loop-optimize "
+export XBPS_TARGET_CFLAGS=" -O2 -pipe -march=armv7-a -mfpu=neon-vfpv4 -mtune=cortex-a15 --param l1-cache-size=64 --param l2-cache-size=1024 -fno-plt -faggressive-loop-optimizations -fguess-branch-probability -floop-nest-optimize -fomit-frame-pointer -fsel-sched-pipelining -fsel-sched-pipelining-outer-loops -fpredictive-commoning -fprefetch-loop-arrays -ftree-loop-optimize -floop-interchange -floop-unroll-and-jam -fpeel-loops -funswitch-loops -fvect-cost-model=dynamic -fsimd-cost-model=dynamic -fsplit-ivs-in-unroller -ftree-loop-ivcanon -ftree-loop-im "
 export XBPS_MAKEJOBS=$(grep 'model name' /proc/cpuinfo --count)
 
 # XXX Restrict archs until a proper <arch>-dotconfig is available in FILESDIR.
@@ -104,11 +104,11 @@ do_build() {
 
 	# force some hw-specific optimizations
 	for tmpcycle in $(find -name Makefile); do
-        sed -i "s/armv7-a/armv7-a -O2 --param l1-cache-size=64 --param l2-cache-size=1024 -fno-plt -mfpu=neon-vfpv4 -faggressive-loop-optimizations -floop-interchange -floop-unroll-and-jam -fpeel-loops -fpredictive-commoning -fsplit-loops -fsplit-paths -funswitch-loops -fvect-cost-model=dynamic -fversion-loops-for-strides -ftree-loop-optimize /g" $tmpcycle
+        sed -i "s/armv7-a/armv7-a -O2 -mfpu=neon-vfpv4 -mtune=cortex-a15 --param l1-cache-size=64 --param l2-cache-size=1024 -fno-plt -faggressive-loop-optimizations -fguess-branch-probability -floop-nest-optimize -fomit-frame-pointer -fsel-sched-pipelining -fsel-sched-pipelining-outer-loops -fpredictive-commoning -fprefetch-loop-arrays -ftree-loop-optimize -floop-interchange -floop-unroll-and-jam -fpeel-loops -funswitch-loops -fvect-cost-model=dynamic -fsimd-cost-model=dynamic -fsplit-ivs-in-unroller -ftree-loop-ivcanon -ftree-loop-im /g" $tmpcycle
         sed -i "s/vfpv /vfpv4 /g" $tmpcycle
         sed -i "s/vfpv,/vfpv4,/g" $tmpcycle
         sed -i "s/-Os/-O2/g" $tmpcycle
-        sed -i "s/-O2/-O2 --param l1-cache-size=64 --param l2-cache-size=1024 -fno-plt -faggressive-loop-optimizations  -floop-interchange -floop-unroll-and-jam -fpeel-loops -fpredictive-commoning -fsplit-loops -fsplit-paths -funswitch-loops -fvect-cost-model=dynamic -fversion-loops-for-strides -ftree-loop-optimize /g" $tmpcycle
+        sed -i "s/-O2/-O2 -pipe --param l1-cache-size=64 --param l2-cache-size=1024 -fno-plt -faggressive-loop-optimizations -fguess-branch-probability -floop-nest-optimize -fomit-frame-pointer -fsel-sched-pipelining -fsel-sched-pipelining-outer-loops -fpredictive-commoning -fprefetch-loop-arrays -ftree-loop-optimize -floop-interchange -floop-unroll-and-jam -fpeel-loops -funswitch-loops -fvect-cost-model=dynamic -fsimd-cost-model=dynamic -fsplit-ivs-in-unroller -ftree-loop-ivcanon -ftree-loop-im /g" $tmpcycle
 	done
 	
 	export LDFLAGS=
@@ -138,8 +138,8 @@ do_install() {
     vinstall arch/arm/boot/dts/exynos5250-snow.dtb 755 boot/dtbs/
     vinstall arch/arm/boot/dts/exynos5250-snow-rev5.dtb 755 boot/dtbs/
     mkdir -p ${DESTDIR}/boot/resign
-    cp ${FILESDIR}/kernel.keyblock /boot/resign/kernel.keyblock
-    cp ${FILESDIR}/kernel_data_key.vbprivk /boot/resign/kernel_data_key.vbprivk
+    cp ${FILESDIR}/kernel.keyblock ${DESTDIR}/boot/resign/kernel.keyblock
+    cp ${FILESDIR}/kernel_data_key.vbprivk ${DESTDIR}/boot/resign/kernel_data_key.vbprivk
     
     cp ${FILESDIR}/kernel.its .
     cp ${FILESDIR}/kernel.keyblock .
