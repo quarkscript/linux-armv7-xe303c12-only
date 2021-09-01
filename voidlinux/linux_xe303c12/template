@@ -137,6 +137,9 @@ do_install() {
     mkdir -p ${DESTDIR}/boot/dtbs
     vinstall arch/arm/boot/dts/exynos5250-snow.dtb 755 boot/dtbs/
     vinstall arch/arm/boot/dts/exynos5250-snow-rev5.dtb 755 boot/dtbs/
+    mkdir -p ${DESTDIR}/boot/resign
+    cp ${FILESDIR}/kernel.keyblock /boot/resign/kernel.keyblock
+    cp ${FILESDIR}/kernel_data_key.vbprivk /boot/resign/kernel_data_key.vbprivk
     
     cp ${FILESDIR}/kernel.its .
     cp ${FILESDIR}/kernel.keyblock .
