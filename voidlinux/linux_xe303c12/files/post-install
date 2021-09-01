@@ -3,7 +3,6 @@
 ## re-sign kernel in case you want to change bootstring
     echo "
 You may re-sign kernel and customize kernel boot string. 
-It require active internet connection. 
 Regular user do not need it, so it is safe to press n.
 Do you want to do this? (y/n)
 "
@@ -78,10 +77,6 @@ Now you may specify a new one or just press Enter"
             #
             mkimage -D "-I dts -O dtb -p 2048" -f /tmp/kernel.its /tmp/vmlinux.uimg
         
-            # download required files
-            curl -o "/tmp/kernel.keyblock" "https://raw.githubusercontent.com/archlinuxarm/PKGBUILDs/master/core/linux-armv7/kernel.keyblock"
-            curl -o "/tmp/kernel_data_key.vbprivk" "https://raw.githubusercontent.com/archlinuxarm/PKGBUILDs/master/core/linux-armv7/kernel_data_key.vbprivk"
-                
             # make empty bootloader
             dd if=/dev/zero of=/tmp/bootloader.bin bs=512 count=1
         
@@ -96,8 +91,8 @@ Now you may specify a new one or just press Enter"
             --version 1 \
             --vmlinuz /tmp/vmlinux.uimg \
             --arch arm \
-            --keyblock /tmp/kernel.keyblock \
-            --signprivate /tmp/kernel_data_key.vbprivk \
+            --keyblock /boot/resign/kernel.keyblock \
+            --signprivate /boot/resign/kernel_data_key.vbprivk \
             --config /tmp/cmdline \
             --bootloader /tmp/bootloader.bin
             
@@ -163,4 +158,6 @@ Will be used vmlinux.kpart from package."
     fi
   fi
 
-echo ''
+echo '
+to repeat resigning-flashing action run /etc/kernel.d/post-install/10-flashkernel with root priveleges
+'
