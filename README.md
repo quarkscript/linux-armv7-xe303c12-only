@@ -32,10 +32,15 @@ or [my old mod of that script](https://github.com/quarkscript/xe303c12_play_linu
 
 #### Recovery / install / test disk images
 - based on archlinux|ARM 
-  - [xe303c12 baremetal](https://drive.google.com/file/d/17X-DlPpTQlipDR5Z5uZ29qQr8UXBKZED/view?usp=sharing) 
-  - [xe303c12 baremetal + virtio drivers](https://drive.google.com/file/d/1O94t7i_gBygdlDLsbyp9D8q7T425sgpM/view?usp=sharing)
-  - [kernel 5.13.6 +xorg +xfce4 +firefox](https://drive.google.com/u/0/uc?id=1fuvSD4JI4uHUUmsGSx2-tupWola-BXJo&export=download)
+  - [disk image 1](https://drive.google.com/u/0/uc?id=1O94t7i_gBygdlDLsbyp9D8q7T425sgpM&export=download) ( console, works on baremetal and under qemu )
+  - [disk image 2](https://drive.google.com/u/0/uc?id=1KzflLkjwrUL8mhmVATV-Cq-WUDJaMdkh&export=download) ( kernel 5.13.13 / autologin to X )
+- based on Void-linux
+  - [glibc disk image](https://drive.google.com/u/0/uc?id=1NrCXfS1krKrBMtfB4m1oucXhcHCUskDM&export=download) ( kernel 5.13.13 / console )
+  - [musl disk image](https://drive.google.com/u/0/uc?id=1b-m4jN2mhNCJIXiOvEJd8gTNfFtY6gq5&export=download) ( kernel 5.13.13 / console )
+- based on Kali linux
+  - [disk image](https://drive.google.com/u/0/uc?id=1KD3avnTKUiXjZflGU7Wx8EheiAlu5ZRY&export=download) ( kernel 5.13.8 / autologin to X )
 
+> X may not work on "console"-s disk images until an updated version of mesa is released on the appropriate distro
 
 #### Example of run under hypervisor (qemu)
 ```
