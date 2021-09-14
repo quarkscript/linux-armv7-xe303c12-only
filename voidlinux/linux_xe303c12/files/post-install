@@ -3,7 +3,7 @@
 ## re-sign kernel in case you want to change bootstring
     echo "
 You may re-sign kernel and customize kernel boot string. 
-Regular user do not need it, so it is safe to press n.
+Regular user do not need it, so it is safe to enter 'n'.
 Do you want to do this? (y/n)
 "
     read -r tmpvar1 
@@ -20,9 +20,12 @@ Now you may specify a new one or just press Enter"
         read -r tmpvar2
         if [ ! -z "$tmpvar2" ]; then
             bootcmd="$tmpvar2"
+	else
+	    echo will be used default boot string
+	fi
             
-            # make kernel.its
-            echo '
+        # make kernel.its
+        echo '
 /dts-v1/;
 
 / {
@@ -98,10 +101,6 @@ Now you may specify a new one or just press Enter"
             
             # clear used files
             rm -f /tmp/vmlinux.uimg /tmp/kernel.keyblock /tmp/kernel_data_key.vbprivk /tmp/cmdline /tmp/bootloader.bin
-        else
-    	    echo "There is no sense to re-sign completly same kernel, this operation aborted. 
-Will be used vmlinux.kpart from package."
-        fi
     fi
   
 ## flash kernel
@@ -159,5 +158,5 @@ Will be used vmlinux.kpart from package."
   fi
 
 echo '
-to repeat resigning-flashing action run /etc/kernel.d/post-install/10-flashkernel with root priveleges
+to repeat this actions run /etc/kernel.d/post-install/10-flashkernel with root priveleges
 '
