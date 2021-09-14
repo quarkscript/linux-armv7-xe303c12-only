@@ -4,9 +4,9 @@ pkgbase=linux-xe303c12
 pkgname=$pkgbase
 _kernelname=${pkgbase#linux}
 _desc="ARMv7 XE303C12-platform"
-pkgver=5.13.13
+pkgver=5.13.16
 _srcname=linux-${pkgver}
-pkgrel=8
+pkgrel=1
 rcnver=5.13.2
 rcnrel=armv7-x11
 arch=('armv7h')
@@ -79,8 +79,8 @@ package() {
     'mkinitcpio>=0.7: not needed for this kernel actually')
   backup=("etc/mkinitcpio.d/${pkgbase}.preset")
   provides=("linux=${pkgver}" "WIREGUARD-MODULE" "linux-headers=${pkgver}" )
-#  conflicts=('linux' 'linux-headers' )
-#  replaces=('linux-armv7' 'linux-armv7-chromebook' 'linux-armv7-rc-chromebook' 'linux-armv7-rc' 'linux-armv7-rc-chromebook' 'linux-armv7-headers' 'linux-armv7-chromebook-headers' 'linux-armv7-rc-chromebook-headers' 'linux-armv7-rc-headers' 'linux-armv7-rc-chromebook-headers')
+  conflicts=('linux' 'linux-headers' )
+  replaces=('linux-armv7' 'linux-armv7-chromebook' 'linux-armv7-rc-chromebook' 'linux-armv7-rc' 'linux-armv7-rc-chromebook' 'linux-armv7-headers' 'linux-armv7-chromebook-headers' 'linux-armv7-rc-chromebook-headers' 'linux-armv7-rc-headers' 'linux-armv7-rc-chromebook-headers')
 
   cd "${srcdir}/${_srcname}"
 
@@ -128,14 +128,11 @@ Now you may specify a new one or just press Enter"
     read -r tmpvar2
     if [ ! -z "$tmpvar2" ]; then
         bootcmd="$tmpvar2"
-        dnt=0
     else
-        echo "There is no sense to re-sign with empty string or completly same kernel, 
-this operation aborted. Will be used untouched kernel.img."
-        dnt=1
+        echo "Will be used default boot string
+	"
     fi
 
-    if [ "$dnt" -eq 0 ]; then
     # make kernel.its
     echo '"'"'
 /dts-v1/;
@@ -212,7 +209,6 @@ this operation aborted. Will be used untouched kernel.img."
         
         # clear used files
         rm -f /tmp/vmlinux.uimg /tmp/cmdline /tmp/bootloader.bin
-    fi
 fi
 
 # flash kernel
@@ -292,11 +288,15 @@ fi' > ${pkgdir}/boot/reflash/kerninst
 echo '
 post_install () {
   /boot/reflash/kerninst
-  echo you may repeat this operations by runing /boot/reflash/kerninst
+  echo "
+  you may repeat this operations by runing /boot/reflash/kerninst
+  "
 }
 post_upgrade() {
   /boot/reflash/kerninst
-  echo you may repeat this operations by runing /boot/reflash/kerninst
+  echo "
+  you may repeat this operations by runing /boot/reflash/kerninst
+  "
 }
 
 post_remove() {
