@@ -34,9 +34,12 @@ or [my old mod of that script](https://github.com/quarkscript/xe303c12_play_linu
 - based on archlinux|ARM 
   - [disk image 1](https://drive.google.com/u/0/uc?id=1O94t7i_gBygdlDLsbyp9D8q7T425sgpM&export=download) ( console, works on baremetal and under qemu )
   - [disk image 2](https://drive.google.com/u/0/uc?id=1KzflLkjwrUL8mhmVATV-Cq-WUDJaMdkh&export=download) ( kernel 5.13.13 / autologin to X )
+  - [test disk image 3](https://drive.google.com/u/0/uc?id=1qo4ExfRGK1Sl-Vv_2SRPctM7H7I330y0&export=download)
 - based on Void-linux
   - [glibc disk image](https://drive.google.com/u/0/uc?id=1NrCXfS1krKrBMtfB4m1oucXhcHCUskDM&export=download) ( kernel 5.13.13 / console )
+  - [glibc test disk image 2](https://drive.google.com/u/0/uc?id=1prHyOl-S5euqLSqer6FYr2tPVegYzjWv&export=download) (autologin to X)
   - [musl disk image](https://drive.google.com/u/0/uc?id=1b-m4jN2mhNCJIXiOvEJd8gTNfFtY6gq5&export=download) ( kernel 5.13.13 / console )
+  - [musl test disk image 2](https://drive.google.com/u/0/uc?id=1VCeMJ8nL8YOCyVMhgLTxi8Vvlqvva7Sg&export=download) (autologin to X)
 - based on Kali linux
   - [disk image](https://drive.google.com/u/0/uc?id=1KD3avnTKUiXjZflGU7Wx8EheiAlu5ZRY&export=download) ( kernel 5.13.8 / autologin to X )
 
