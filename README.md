@@ -33,7 +33,6 @@ or [my old mod of that script](https://github.com/quarkscript/xe303c12_play_linu
 #### Recovery / install / test disk images
 - based on archlinux|ARM 
   - [disk image 1](https://drive.google.com/u/0/uc?id=1O94t7i_gBygdlDLsbyp9D8q7T425sgpM&export=download) ( console, works on baremetal and under qemu )
-  - [disk image 2](https://drive.google.com/u/0/uc?id=1KzflLkjwrUL8mhmVATV-Cq-WUDJaMdkh&export=download) ( kernel 5.13.13 / autologin to X )
   - [test disk image 3](https://drive.google.com/u/0/uc?id=1qo4ExfRGK1Sl-Vv_2SRPctM7H7I330y0&export=download)
 - based on Void-linux
   - [glibc disk image](https://drive.google.com/u/0/uc?id=1NrCXfS1krKrBMtfB4m1oucXhcHCUskDM&export=download) ( kernel 5.13.13 / console )
@@ -41,7 +40,7 @@ or [my old mod of that script](https://github.com/quarkscript/xe303c12_play_linu
   - [musl disk image](https://drive.google.com/u/0/uc?id=1b-m4jN2mhNCJIXiOvEJd8gTNfFtY6gq5&export=download) ( kernel 5.13.13 / console )
   - [musl test disk image 2](https://drive.google.com/u/0/uc?id=1VCeMJ8nL8YOCyVMhgLTxi8Vvlqvva7Sg&export=download) (autologin to X)
 - based on Kali linux
-  - [disk image](https://drive.google.com/u/0/uc?id=1KD3avnTKUiXjZflGU7Wx8EheiAlu5ZRY&export=download) ( kernel 5.13.8 / autologin to X )
+  - [disk image](https://drive.google.com/u/0/uc?id=1KD3avnTKUiXjZflGU7Wx8EheiAlu5ZRY&export=download) ( kernel 5.13.8 / autologin to X ; boot from sdcard, may not boot from pendrive)
 
 > X may not work on "console"-s disk images until an updated version of mesa is released on the appropriate distro
 
@@ -50,7 +49,13 @@ or [my old mod of that script](https://github.com/quarkscript/xe303c12_play_linu
 qemu-system-arm -machine virt -m 1024 -kernel zImage -append "root=/dev/vda2" -serial stdio -drive if=none,file=armv7hf_q.img,format=raw,id=hd0 -device virtio-blk-device,drive=hd0 -netdev user,id=net0 -device virtio-net-device,netdev=net0 
 ```
 ![](example.gif)
-> zImage could be extracted from second partition of disk image
+> zImage could be extracted from second partition of disk image like:
+```
+mkdir dsk
+sudo mount -t btrfs -o,loop,offset=$((512*40960)) armv7hf_q.img dsk
+cp dsk/boot/zImage zImage
+sudo umount dsk
+```
 
 #### Example of cross-compiling Void-linux packages 
 (from any x86_64 linux)
