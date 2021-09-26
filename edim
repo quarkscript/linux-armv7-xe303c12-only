@@ -1,0 +1,141 @@
+#!/bin/bash
+
+if [ -z $1 ]; then
+    echo "
+## Crome Os -like empty disk image maker
+## It creates a disk image with only kernel and root partitions,
+## for other scheme use cgpt manually.
+##
+## use: $0 'dsk size in Mb '
+## or: sudo $0 'dsk size in Mb ' 'root file system type'
+##
+## requires: kpartx, cgpt, mkfs.btrfs, mkfs.f2fs or mkfs.ext4 for specified fs
+##
+## 'WARNING: Primary GPT header is invalid' and
+## 'WARNING: Secondary GPT header is invalid'
+## is normal for chromeos disks
+"
+    exit 1
+fi
+if [ $1 -le 1023 ]; then
+    echo "
+    disk size is too small, specify 1024 or more
+    "
+    exit 1
+fi
+if [ $(whoami) == root ] ; then
+    if [ -z $2 ] || $(echo btrfs f2fs ext4 | grep -vq $2); then
+        echo "
+    specify btrfs or f2fs or ext4 like: $0 $1 btrfs
+    "
+        exit 1
+    fi
+fi
+if $(kpartx 2>&1 | grep -q 'command not found'); then
+    echo '
+    kpartx is required
+    '
+    exit 1
+fi
+if $(cgpt 2>&1 | grep -q 'command not found'); then
+    echo '
+    cgpt is required
+    '
+    exit 1
+fi
+
+basedir=$PWD
+
+dd if=/dev/zero of=${basedir}/xe303c12_disk.img bs=1M count=$1
+parted xe303c12_disk.img --script -- mklabel gpt
+cgpt create -z xe303c12_disk.img
+cgpt create xe303c12_disk.img
+cgpt add -i 1 -t kernel -b 8192 -s 32768 -l kernel -S 1 -T 5 -P 10 xe303c12_disk.img
+cgpt add -i 2 -t data -b 40960 -s `expr $(cgpt show xe303c12_disk.img | grep 'Sec GPT table' | awk '{ print \$1 }')  - 40960` -l Root xe303c12_disk.img
+
+if [ $(whoami) == root ] ; then
+    
+    loopdevice=`losetup -f --show ${basedir}/xe303c12_disk.img`
+    device=`kpartx -va $loopdevice| sed -E 's/.*(loop[0-9])p.*/\1/g' | head -1`
+    sleep 5
+    device="/dev/mapper/${device}"
+    bootp=${device}p1
+    rootp=${device}p2
+
+    mkdir -p ${basedir}/root
+    if [ "$2" == "btrfs" ]; then
+        mkfs.btrfs -f --label rootfs $rootp
+        mount $rootp ${basedir}/root -o,compress,space_cache
+    elif [ "$2" == "f2fs" ]; then
+        mkfs.f2fs -f -O 'extra_attr flexible_inline_xattr compression encrypt ' -l rootfs $rootp
+        mount $rootp ${basedir}/root -o,compress_algorithm=lzo,compress_extension=*
+    else
+        mkfs.ext4 -O ^flex_bg -O ^metadata_csum -L rootfs $rootp
+        mount $rootp ${basedir}/root
+    fi
+
+    rootuuid=$(LANG=C blkid | grep "$rootp" | grep 'LABEL="rootfs"' | sed 's/.* UUID="//g' | sed 's/".*//g')
+
+    if [ ! -d ${basedir}/root/etc ]; then
+        mkdir -p ${basedir}/root/etc
+    fi
+
+    if [ "$2" == "btrfs" ]; then
+cat << EOF> ${basedir}/root/etc/fstab
+# /etc/fstab: static file system information.
+#
+# Use 'blkid' to print the universally unique identifier for a
+# device; this may be used with UUID= as a more robust way to name devices
+# that works even if disks are added and removed. See fstab(5).
+#
+# <file system> <mount point>   <type>  <options>       <dump>  <pass>
+# / was on /dev/sda2 during installation
+UUID=$rootuuid /               btrfs    rw,noatime,compress=zstd,space_cache,autodefrag,ssd 0       0
+# swap was on /dev/sdaX during installation
+#UUID= none            swap    sw              0       0
+#/dev/sr0        /media/cdrom0   udf,iso9660 user,noauto     0       0
+EOF
+    elif [ "$2" == "f2fs" ]; then
+cat << EOF> ${basedir}/root/etc/fstab
+# /etc/fstab: static file system information.
+#
+# Use 'blkid' to print the universally unique identifier for a
+# device; this may be used with UUID= as a more robust way to name devices
+# that works even if disks are added and removed. See fstab(5).
+#
+# <file system> <mount point>   <type>  <options>       <dump>  <pass>
+# / was on /dev/sda2 during installation
+UUID=$rootuuid /               f2fs    rw,noatime,compress_algorithm=zstd,compress_extension=* 0       1
+# swap was on /dev/sdaX during installation
+#UUID= none            swap    sw              0       0
+#/dev/sr0        /media/cdrom0   udf,iso9660 user,noauto     0       0
+EOF
+    else
+cat << EOF> ${basedir}/root/etc/fstab
+# /etc/fstab: static file system information.
+#
+# Use 'blkid' to print the universally unique identifier for a
+# device; this may be used with UUID= as a more robust way to name devices
+# that works even if disks are added and removed. See fstab(5).
+#
+# <file system> <mount point>   <type>  <options>       <dump>  <pass>
+# / was on /dev/sda2 during installation
+UUID=$rootuuid /               ext4    rw,noatime 0       1
+# swap was on /dev/sdaX during installation
+#UUID= none            swap    sw              0       0
+#/dev/sr0        /media/cdrom0   udf,iso9660 user,noauto     0       0
+EOF
+    fi
+    
+    echo "to unmount root run
+    sudo umount root
+to flash kernel.bin run
+    sudo dd if='path to kernel.bin' of=$bootp
+to remove loop devices run
+    sudo kpartx -dv $loopdevice
+    sudo losetup -d $loopdevice"
+else
+    echo '
+    root rights was not granted, you can format and mount the partitions manually
+    '
+fi
