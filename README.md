@@ -33,16 +33,18 @@ or [my old mod of that script](https://github.com/quarkscript/xe303c12_play_linu
 #### Recovery / install / test disk images
 - based on archlinux|ARM 
   - [disk image 1](https://drive.google.com/u/0/uc?id=1O94t7i_gBygdlDLsbyp9D8q7T425sgpM&export=download) ( console, works on baremetal and under qemu )
-  - [test disk image 3](https://drive.google.com/u/0/uc?id=1qo4ExfRGK1Sl-Vv_2SRPctM7H7I330y0&export=download)
+  - [disk image 3](https://drive.google.com/u/0/uc?id=1qo4ExfRGK1Sl-Vv_2SRPctM7H7I330y0&export=download)
 - based on Void-linux
   - [glibc disk image](https://drive.google.com/u/0/uc?id=1NrCXfS1krKrBMtfB4m1oucXhcHCUskDM&export=download) ( kernel 5.13.13 / console )
-  - [glibc test disk image 2](https://drive.google.com/u/0/uc?id=1prHyOl-S5euqLSqer6FYr2tPVegYzjWv&export=download) (autologin to X)
+  - [glibc disk image 2](https://drive.google.com/u/0/uc?id=1prHyOl-S5euqLSqer6FYr2tPVegYzjWv&export=download) (autologin to X)
   - [musl disk image](https://drive.google.com/u/0/uc?id=1b-m4jN2mhNCJIXiOvEJd8gTNfFtY6gq5&export=download) ( kernel 5.13.13 / console )
-  - [musl test disk image 2](https://drive.google.com/u/0/uc?id=1VCeMJ8nL8YOCyVMhgLTxi8Vvlqvva7Sg&export=download) (autologin to X)
+  - [musl disk image 2](https://drive.google.com/u/0/uc?id=1VCeMJ8nL8YOCyVMhgLTxi8Vvlqvva7Sg&export=download) (autologin to X)
 - based on Kali linux
-  - [disk image](https://drive.google.com/u/0/uc?id=1KD3avnTKUiXjZflGU7Wx8EheiAlu5ZRY&export=download) ( kernel 5.13.8 / autologin to X ; boot from sdcard, may not boot from pendrive)
+  - [disk image](https://drive.google.com/u/0/uc?id=1meNMjZaphdySOPjudi1tr-4pjXMNLCBm&export=download) ( kernel 5.13.8 / autologin to X)
 
 > X may not work on "console"-s disk images until an updated version of mesa is released on the appropriate distro
+
+> [empty disk image maker](edim) can be used to create a disk image of the required size, then just copy the contents of the root partition into it and write the kernel image to the kernel partition.
 
 #### Example of run under hypervisor (qemu)
 ```
