@@ -12,6 +12,9 @@
   - support samsung\google snow - [XE303C12 chromebook](https://archlinuxarm.org/platforms/armv7/samsung/samsung-chromebook) only.
   
  - [firmware](archlinuxarm/linux_xe303c12_firmware) - Archlinux|ARM package build script. It collect a couple of necessary files and saves some space compared to regular linux-firmware.
+ - [some forked apps](archlinuxarm/some_forked_apps) may run faster than from repo or may not
+
+Some (not all) packages from [AUR](https://aur.archlinux.org) could be installed by [sfslib](https://github.com/quarkscript/Simple_func_scripts/blob/master/sfslib) like `./sfslib armget 'pkg name'`
 
 #### [Void-linux folder](voidlinux)
 The same, but for void-linux. Second forked source is [void-packages](https://github.com/void-linux/void-packages/tree/master/srcpkgs/linux5.8). 
@@ -21,8 +24,6 @@ The same, but for void-linux. Second forked source is [void-packages](https://gi
 - [xorg video driver](voidlinux/xf86-video-armsoc-git) - Void-linux package build script, forked from [archlinux|ARM](https://github.com/archlinuxarm/PKGBUILDs/tree/master/alarm/xf86-video-armsoc-git) (at least it works for xfce4)
 
 > Some already builded packages can be found at [releases](https://github.com/quarkscript/linux-armv7-xe303c12-only/releases)
-
-> Be aware! Given scripts or packages are not officially supported by any mentioned Linux distributions.
 
 
 #### Kali linux
@@ -44,14 +45,15 @@ or [my old mod of that script](https://github.com/quarkscript/xe303c12_play_linu
 
 > X may not work on "console"-s disk images until an updated version of mesa is released on the appropriate distro
 
-> [empty disk image maker](edim) can be used to create a disk image of the required size, then just copy the contents of the root partition into it and write the kernel image to the kernel partition.
+ [empty disk image maker](edim) can be used to create a disk image of the required size, then just copy the contents of the root partition into it and write the kernel image to the kernel partition.
 
 #### Example of run under hypervisor (qemu)
 ```
 qemu-system-arm -machine virt -m 1024 -kernel zImage -append "root=/dev/vda2" -serial stdio -drive if=none,file=armv7hf_q.img,format=raw,id=hd0 -device virtio-blk-device,drive=hd0 -netdev user,id=net0 -device virtio-net-device,netdev=net0 
 ```
 ![](example.gif)
-> zImage could be extracted from second partition of disk image like:
+
+ zImage could be extracted from second partition of disk image like:
 ```
 mkdir dsk
 sudo mount -t btrfs -o,loop,offset=$((512*40960)) armv7hf_q.img dsk
@@ -106,8 +108,8 @@ cd void-packages/
 ## make musl X- video driver package
   ./xbps-src -m x86_64-musl -a armv7hf-musl pkg xf86-video-armsoc-git
 ```
-> Since the signing of the kernel may fails with the latest uboot-tools, downgrade of uboot-tools may be required.
+ Since the signing of the kernel may fails with the latest uboot-tools, downgrade of uboot-tools may be required.
 
->
+ If you plan to re-sign kernel during installation then you will need to install a builded uboot-mkimage/uboot-tools firstly.
 
-> If you plan to re-sign kernel during installation then you will need to install a builded uboot-mkimage/uboot-tools firstly
+> Be aware! Given scripts or packages are not officially supported by any mentioned Linux distributions.
