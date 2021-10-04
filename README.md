@@ -12,7 +12,7 @@
   - support samsung\google snow - [XE303C12 chromebook](https://archlinuxarm.org/platforms/armv7/samsung/samsung-chromebook) only.
   
  - [firmware](archlinuxarm/linux_xe303c12_firmware) - Archlinux|ARM package build script. It collect a couple of necessary files and saves some space compared to regular linux-firmware.
- - [some forked apps](archlinuxarm/some_forked_apps) may run faster than from repo or may not
+ - [some forked apps](archlinuxarm/some_forked_apps) may run faster than from repo or may not ( [builded](https://github.com/quarkscript/linux-armv7-xe303c12-only/releases/tag/some_apps_21.10.04) )
 
 Some (not all) packages from [AUR](https://aur.archlinux.org) could be installed by [sfslib](https://github.com/quarkscript/Simple_func_scripts/blob/master/sfslib) like `./sfslib armget 'pkg name'`
 
