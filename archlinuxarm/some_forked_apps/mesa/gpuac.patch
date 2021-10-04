@@ -1,0 +1,12 @@
+diff -Naur a/src/gallium/drivers/panfrost/pan_screen.c b/src/gallium/drivers/panfrost/pan_screen.c
+--- a/src/gallium/drivers/panfrost/pan_screen.c	1970-01-01 03:00:00.000000000 +0300
++++ b/src/gallium/drivers/panfrost/pan_screen.c	2021-09-12 10:25:43.956486436 +0300
+@@ -845,6 +846,8 @@
+         /* Check if we're loading against a supported GPU model. */
+ 
+         switch (dev->gpu_id) {
++        case 0x600: /* T60x - try unsupported gpu*/
++        case 0x604: /* T60x - try unsupported gpu*/
+         case 0x720: /* T720 */
+         case 0x750: /* T760 */
+         case 0x820: /* T820 */

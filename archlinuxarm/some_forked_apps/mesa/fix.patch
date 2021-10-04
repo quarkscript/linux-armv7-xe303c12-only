@@ -1,0 +1,13 @@
+diff -Naur a/src/gallium/drivers/panfrost/pan_screen.c b/src/gallium/drivers/panfrost/pan_screen.c
+--- a/src/gallium/drivers/panfrost/pan_screen.c	1970-01-01 03:00:00.000000000 +0300
++++ b/src/gallium/drivers/panfrost/pan_screen.c	2021-09-11 14:04:32.869208578 +0300
+@@ -699,7 +699,8 @@
+         panfrost_pool_cleanup(&screen->blitter.desc_pool);
+         pan_blend_shaders_cleanup(dev);
+ 
+-        screen->vtbl.screen_destroy(pscreen);
++        if (screen->vtbl.screen_destroy)
++                screen->vtbl.screen_destroy(pscreen);
+ 
+         if (dev->ro)
+                 dev->ro->destroy(dev->ro);
