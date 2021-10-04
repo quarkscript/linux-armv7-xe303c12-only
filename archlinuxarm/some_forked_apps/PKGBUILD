@@ -1,0 +1,179 @@
+# modded archlinuxarm mesa for xe303c12 
+
+pkgbase=mesa
+pkgname=('vulkan-mesa-layers' 'vulkan-swrast' 'vulkan-panfrost' 'mesa')
+pkgdesc="An open-source implementation of the OpenGL specification"
+pkgver=21.2.1
+pkgrel=1.1
+arch=('armv7h')
+makedepends=('python-mako' 'libxml2' 'libx11' 'xorgproto' 'libdrm' 'libxshmfence' 'libxxf86vm'
+             'libxdamage' 'libvdpau' 'libva' 'wayland' 'wayland-protocols' 'zstd' 'elfutils' 'llvm'
+             'libomxil-bellagio' 'libclc' 'clang' 'libglvnd' 'libunwind' 'lm_sensors' 'libxrandr'
+             'glslang' 'vulkan-icd-loader' 'cmake' 'meson')
+url="https://www.mesa3d.org/"
+license=('custom')
+source=(https://mesa.freedesktop.org/archive/mesa-${pkgver}.tar.xz
+        fix.patch
+        gpuac.patch
+        LICENSE)
+sha512sums=('SKIP'
+            'SKIP'
+            'SKIP'
+            'SKIP')
+
+prepare() {
+  cd mesa-$pkgver
+    patch -p1 -i ../fix.patch
+    # 
+    patch -p1 -i ../gpuac.patch
+    CPPFLAGS+=" -DNO_FORMAT_ASM"
+    CXXFLAFS+=" -O2 -pipe -march=armv7-a+mp+neon-vfpv4 -mfpu=neon-vfpv4 --param l1-cache-size=64 --param l2-cache-size=1024 -fno-plt -faggressive-loop-optimizations -fguess-branch-probability -floop-nest-optimize -fomit-frame-pointer -fsel-sched-pipelining -fsel-sched-pipelining-outer-loops -fpredictive-commoning -fprefetch-loop-arrays -ftree-loop-optimize -floop-interchange -floop-unroll-and-jam -fpeel-loops -funswitch-loops -fvect-cost-model=dynamic -fsimd-cost-model=dynamic -fsplit-ivs-in-unroller -ftree-loop-ivcanon -ftree-loop-im "
+    CPPFLAGS+=" -O2 -pipe -march=armv7-a+mp+neon-vfpv4 -mfpu=neon-vfpv4 --param l1-cache-size=64 --param l2-cache-size=1024 -fno-plt -faggressive-loop-optimizations -fguess-branch-probability -floop-nest-optimize -fomit-frame-pointer -fsel-sched-pipelining -fsel-sched-pipelining-outer-loops -fpredictive-commoning -fprefetch-loop-arrays -ftree-loop-optimize -floop-interchange -floop-unroll-and-jam -fpeel-loops -funswitch-loops -fvect-cost-model=dynamic -fsimd-cost-model=dynamic -fsplit-ivs-in-unroller -ftree-loop-ivcanon -ftree-loop-im "
+    CFLAGS+=" -O2 -pipe -march=armv7-a+mp+neon-vfpv4 -mfpu=neon-vfpv4 --param l1-cache-size=64 --param l2-cache-size=1024 -fno-plt -faggressive-loop-optimizations -fguess-branch-probability -floop-nest-optimize -fomit-frame-pointer -fsel-sched-pipelining -fsel-sched-pipelining-outer-loops -fpredictive-commoning -fprefetch-loop-arrays -ftree-loop-optimize -floop-interchange -floop-unroll-and-jam -fpeel-loops -funswitch-loops -fvect-cost-model=dynamic -fsimd-cost-model=dynamic -fsplit-ivs-in-unroller -ftree-loop-ivcanon -ftree-loop-im "
+}
+
+build() {
+    GALLIUM=",kmsro,panfrost,v3d" 
+
+    #arch-meson mesa-$pkgver build \
+    meson mesa-$pkgver build \
+    -D b_lto=false \
+    -D b_ndebug=true \
+    -D platforms=x11,wayland \
+    -D gallium-drivers=swrast,virgl,zink${GALLIUM} \
+    -D vulkan-drivers=swrast,panfrost \
+    -D vulkan-layers=device-select,overlay \
+    -D dri3=enabled \
+    -D egl=enabled \
+    -D gallium-extra-hud=true \
+    -D gallium-nine=false \
+    -D gallium-opencl=disabled \
+    -D gallium-va=disabled \
+    -D gallium-vdpau=disabled\
+    -D gallium-xa=disabled \
+    -D gallium-xvmc=disabled \
+    -D gbm=enabled \
+    -D gles1=disabled \
+    -D gles2=enabled \
+    -D glvnd=true \
+    -D glx=dri \
+    -D libunwind=disabled \
+    -D llvm=enabled \
+    -D lmsensors=enabled \
+    -D osmesa=true \
+    -D shared-glapi=enabled \
+    -D microsoft-clc=disabled \
+    -D valgrind=disabled
+    #    -D gallium-omx=bellagio \
+    #    -D dri-drivers=r100,r200,nouveau \
+
+    # Print config
+    meson configure build
+
+    ninja -C build
+    meson compile -C build
+
+    # fake installation to be separated into packages
+    # outside of fakeroot but mesa doesn't need to chown/mod
+    DESTDIR="${srcdir}/fakeinstall" meson install -C build
+
+    mv -f ${srcdir}/fakeinstall/usr/local/* ${srcdir}/fakeinstall/usr
+    #mkdir ${srcdir}/fakeinstall/usr/local/lib
+    #ln -sr ${srcdir}/fakeinstall/usr/lib/dri  ${srcdir}/fakeinstall/usr/local/lib/dri 
+    #mv -f ${srcdir}/fakeinstall/usr/etc ${srcdir}/fakeinstall
+}
+
+_install() {
+  local src f dir
+  for src; do
+    f="${src#fakeinstall/}"
+    dir="${pkgdir}/${f%/*}"
+    install -m755 -d "${dir}"
+    mv -v "${src}" "${dir}/"
+  done
+}
+
+package_vulkan-mesa-layers() {
+  pkgdesc="Mesa's Vulkan layers"
+  depends=('libdrm' 'libxcb' 'wayland' 'python')
+  conflicts=('vulkan-mesa-layer')
+  replaces=('vulkan-mesa-layer')
+
+  _install fakeinstall/usr/share/vulkan/explicit_layer.d
+  _install fakeinstall/usr/share/vulkan/implicit_layer.d
+  _install fakeinstall/usr/lib/libVkLayer_*.so
+  _install fakeinstall/usr/bin/mesa-overlay-control.py
+
+  install -m644 -Dt "${pkgdir}/usr/share/licenses/${pkgname}" LICENSE
+}
+
+package_vulkan-swrast() {
+  pkgdesc="Vulkan software rasteriser driver"
+  depends=('wayland' 'libx11' 'libxshmfence' 'libdrm' 'zstd' 'llvm-libs')
+  optdepends=('vulkan-mesa-layers: additional vulkan layers')
+  conflicts=('vulkan-mesa')
+  replaces=('vulkan-mesa')
+  provides=('vulkan-driver')
+
+  _install fakeinstall/usr/share/vulkan/icd.d/lvp_icd*.json
+  _install fakeinstall/usr/lib/libvulkan_lvp.so
+
+  install -m644 -Dt "${pkgdir}/usr/share/licenses/${pkgname}" LICENSE
+}
+
+package_vulkan-panfrost() {
+  pkgdesc="Panfrost Vulkan mesa driver"
+  depends=('wayland' 'libx11' 'libxshmfence' 'libdrm')
+  optdepends=('vulkan-mesa-layers: additional vulkan layers')
+  provides=('vulkan-driver')
+
+  _install fakeinstall/usr/share/vulkan/icd.d/panfrost_icd*.json
+  _install fakeinstall/usr/lib/libvulkan_panfrost.so
+
+  install -m644 -Dt "${pkgdir}/usr/share/licenses/${pkgname}" LICENSE
+}
+
+package_mesa() {
+  depends=('libdrm' 'wayland' 'libxxf86vm' 'libxdamage' 'libxshmfence' 'libelf'
+           'libomxil-bellagio' 'libunwind' 'llvm-libs' 'lm_sensors' 'libglvnd'
+           'zstd' 'vulkan-icd-loader')
+  depends+=('libsensors.so' 'libexpat.so' 'libvulkan.so')
+  optdepends=('opengl-man-pages: for the OpenGL API man pages'
+              'mesa-vdpau: for accelerated video playback'
+              'libva-mesa-driver: for accelerated video playback')
+  provides=('mesa-libgl' 'opengl-driver')
+  conflicts=('mesa-libgl')
+  replaces=('mesa-libgl')
+
+  _install fakeinstall/usr/share/drirc.d/00-mesa-defaults.conf
+  _install fakeinstall/usr/share/glvnd/egl_vendor.d/50_mesa.json
+
+  # ati-dri, nouveau-dri, intel-dri, svga-dri, swrast, swr
+  _install fakeinstall/usr/lib/dri/*_dri.so
+
+  #_install fakeinstall/usr/lib/bellagio
+  #_install fakeinstall/usr/lib/d3d
+  _install fakeinstall/usr/lib/lib{gbm,glapi}.so*
+  _install fakeinstall/usr/lib/libOSMesa.so*
+
+  _install fakeinstall/usr/include
+  rm -f fakeinstall/usr/lib/pkgconfig/{egl,gl}.pc
+  _install fakeinstall/usr/lib/pkgconfig
+
+  # libglvnd support
+  _install fakeinstall/usr/lib/libGLX_mesa.so*
+  _install fakeinstall/usr/lib/libEGL_mesa.so*
+
+  # indirect rendering
+  ln -s /usr/lib/libGLX_mesa.so.0 "${pkgdir}/usr/lib/libGLX_indirect.so.0"
+
+  rm -fr fakeinstall/*
+  
+  # make sure there are no files left to install
+  find fakeinstall -depth -print0 | xargs -0 rmdir
+
+  install -m644 -Dt "${pkgdir}/usr/share/licenses/${pkgname}" LICENSE
+  #
+  mkdir -p ${pkgdir}/usr/local/lib/
+  ln -sr "${pkgdir}/usr/lib/dri" "${pkgdir}/usr/local/lib/dri"
+}
