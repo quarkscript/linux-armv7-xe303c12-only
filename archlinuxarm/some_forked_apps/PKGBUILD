@@ -1,0 +1,49 @@
+pkgname=libjpeg-turbo
+pkgver=2.1.1
+pkgrel=1
+pkgdesc='JPEG image codec with accelerated baseline compression and decompression'
+url='https://libjpeg-turbo.org/'
+arch=('armv7h')
+license=('BSD')
+depends=('glibc')
+makedepends=('cmake')
+provides=('libjpeg' 'libjpeg.so' 'libturbojpeg.so')
+source=("https://sourceforge.net/projects/${pkgname}/files/${pkgver}/${pkgname}-${pkgver}.tar.gz")
+sha512sums=('SKIP')
+b2sums=('SKIP')
+validpgpkeys=('0338C8D8D9FDA62CF9C421BD7EC2DBB6F4DBF434') # The libjpeg-turbo Project (Signing key for official binaries) <information@libjpeg-turbo.org>
+
+build() {
+  cd "${pkgname}-${pkgver}"
+#  [[ $CARCH != "aarch64" ]] && CONFIG="-DWITH_SIMD=FALSE"
+  cmake -DCMAKE_INSTALL_PREFIX=/usr \
+        -DCMAKE_INSTALL_LIBDIR=/usr/lib \
+        -DCMAKE_BUILD_TYPE='None' \
+        -DWITH_JAVA=OFF \
+        -DWITH_JPEG8=ON \
+        -W no-dev \
+        -B build $CONFIG -DWITH_SIMD=TRUE \
+        -S .
+  make VERBOSE=1 -C build
+}
+
+# turned off because test bug https://github.com/libjpeg-turbo/libjpeg-turbo/commit/88bf1d16786c74f76f2e4f6ec2873d092f577c75 
+# is reported and/or not fixed for armv7h and only failed tests is described there
+#check() {
+#  cd "${pkgname}-${pkgver}"
+#  make test -C build
+#}
+
+package() {
+  cd "${pkgname}-${pkgver}"
+  make VERBOSE=1 DESTDIR="${pkgdir}" \
+       docdir="/usr/share/doc/${pkgname}" \
+       exampledir="/usr/share/doc/${pkgname}" \
+       install -C build
+
+  install -d "${pkgdir}/usr/share/licenses/${pkgname}"
+  ln -s ../../doc/${pkgname}/LICENSE.md "${pkgdir}/usr/share/licenses/${pkgname}"
+  # header required by some dependants
+  # https://bugs.archlinux.org/task/24787
+  install -m 644 jpegint.h "${pkgdir}/usr/include"
+}
