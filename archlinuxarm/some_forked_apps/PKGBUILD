@@ -1,0 +1,39 @@
+pkgname=pixman
+pkgver=0.40.0
+pkgrel=1
+pkgdesc="The pixel-manipulation library for X and cairo"
+arch=(armv7h)
+url="https://cgit.freedesktop.org/pixman/"
+license=('custom')
+depends=('glibc')
+makedepends=('meson' 'libpng')
+provides=('libpixman-1.so')
+source=(https://xorg.freedesktop.org/releases/individual/lib/${pkgname}-${pkgver}.tar.xz)
+sha512sums=('SKIP')
+#validpgpkeys=('') # Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+
+build() {
+  arch-meson $pkgbase-$pkgver build \
+    -D loongson-mmi=disabled \
+    -D vmx=disabled \
+    -D arm-simd=enabled \
+    -D neon=enabled \
+    -D iwmmxt=disabled \
+    -D mmx=disabled \
+    -D sse2=disabled \
+    -D ssse3=disabled \
+    -D mips-dspr2=disabled \
+    -D gtk=disabled
+  ninja -C build
+}
+
+# disabled because tolerance_test and composite require more time than 120s (at exynos 5250)
+# it ends by timeout and cause buldfail
+#check() {
+#  meson test -C build
+#}
+
+package() {
+  DESTDIR="$pkgdir" meson install -C build
+  install -Dt "$pkgdir/usr/share/licenses/$pkgname" -m644 $pkgname-$pkgver/COPYING
+}
