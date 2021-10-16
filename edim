@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [ -z $1 ]; then
+if [ -z $1 ]||[ $1 == "-h" ]||[ $1 == "-help" ]||[ $1 == "--help" ]; then
     echo "
 ## Crome Os -like empty disk image maker
 ## It creates a disk image with only kernel and root partitions,
@@ -30,6 +30,12 @@ if [ $(whoami) == root ] ; then
     "
         exit 1
     fi
+fi
+if $(parted -h 2>&1 | grep -q 'command not found'); then
+    echo '
+    parted is required
+    '
+    exit 1
 fi
 if $(kpartx 2>&1 | grep -q 'command not found'); then
     echo '
