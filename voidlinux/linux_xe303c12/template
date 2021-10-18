@@ -1,6 +1,6 @@
 # Template file for 'linux_xe303c12'
 pkgname=linux_xe303c12
-version=5.14.7
+version=5.14.13
 revision=1
 wrksrc="linux-${version}"
 short_desc="Linux kernel and modules and headers (${version%.*} for XE303C12 armv7hf samsung/google-snow Chromebook)"
@@ -8,11 +8,11 @@ maintainer="none"
 license="GPL-2.0-only"
 homepage="https://www.kernel.org"
 distfiles="https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-${version}.tar.xz"
-checksum=af2539449f6a6161621609572b17d269bbbae4fcfffe3e044249b0b8b5ba7eab
+checksum=832b78b4c098a99f5c0c50160e3fa58a81412419734c5e8e1b04342fcb4b964d
 python_version=3
 patch_args="-Np1"
 
-export XBPS_TARGET_CFLAGS=" -O2 -pipe -march=armv7-a -mfpu=neon-vfpv4 -mtune=cortex-a15 --param l1-cache-size=64 --param l2-cache-size=1024 -fno-plt -faggressive-loop-optimizations -fguess-branch-probability -floop-nest-optimize -fomit-frame-pointer -fsel-sched-pipelining -fsel-sched-pipelining-outer-loops -fpredictive-commoning -fprefetch-loop-arrays -ftree-loop-optimize -floop-interchange -floop-unroll-and-jam -fpeel-loops -funswitch-loops -fvect-cost-model=dynamic -fsimd-cost-model=dynamic -fsplit-ivs-in-unroller -ftree-loop-ivcanon -ftree-loop-im "
+export XBPS_TARGET_CFLAGS=" -O2 -pipe -march=armv7-a -mfpu=neon-vfpv4 --param l1-cache-size=64 --param l2-cache-size=1024 -fno-plt -faggressive-loop-optimizations -fguess-branch-probability -floop-nest-optimize -fomit-frame-pointer -fsel-sched-pipelining -fsel-sched-pipelining-outer-loops -fpredictive-commoning -fprefetch-loop-arrays -ftree-loop-optimize -floop-interchange -floop-unroll-and-jam -fpeel-loops -funswitch-loops -fvect-cost-model=dynamic -fsimd-cost-model=dynamic -fsplit-ivs-in-unroller -ftree-loop-ivcanon -ftree-loop-im "
 export XBPS_MAKEJOBS=$(grep 'model name' /proc/cpuinfo --count)
 
 # XXX Restrict archs until a proper <arch>-dotconfig is available in FILESDIR.
@@ -25,7 +25,7 @@ noshlibprovides=yes
 preserve=yes
 
 hostmakedepends="tar xz bc elfutils-devel flex gmp-devel kmod libmpc-devel
-libressl-devel perl uboot-mkimage-2020.10_1 vboot-utils dtc cpio pahole git"
+libressl-devel perl uboot-mkimage-2020.10_1 vboot-utils dtc cpio pahole git zstd"
 
 depends+="vboot-utils uboot-mkimage"
  
@@ -104,7 +104,7 @@ do_build() {
 
 	# force some hw-specific optimizations
 	for tmpcycle in $(find -name Makefile); do
-        sed -i "s/armv7-a/armv7-a -O2 -mfpu=neon-vfpv4 -mtune=cortex-a15 --param l1-cache-size=64 --param l2-cache-size=1024 -fno-plt -faggressive-loop-optimizations -fguess-branch-probability -floop-nest-optimize -fomit-frame-pointer -fsel-sched-pipelining -fsel-sched-pipelining-outer-loops -fpredictive-commoning -fprefetch-loop-arrays -ftree-loop-optimize -floop-interchange -floop-unroll-and-jam -fpeel-loops -funswitch-loops -fvect-cost-model=dynamic -fsimd-cost-model=dynamic -fsplit-ivs-in-unroller -ftree-loop-ivcanon -ftree-loop-im /g" $tmpcycle
+        sed -i "s/armv7-a/armv7-a -O2 -mfpu=neon-vfpv4 --param l1-cache-size=64 --param l2-cache-size=1024 -fno-plt -faggressive-loop-optimizations -fguess-branch-probability -floop-nest-optimize -fomit-frame-pointer -fsel-sched-pipelining -fsel-sched-pipelining-outer-loops -fpredictive-commoning -fprefetch-loop-arrays -ftree-loop-optimize -floop-interchange -floop-unroll-and-jam -fpeel-loops -funswitch-loops -fvect-cost-model=dynamic -fsimd-cost-model=dynamic -fsplit-ivs-in-unroller -ftree-loop-ivcanon -ftree-loop-im /g" $tmpcycle
         sed -i "s/vfpv /vfpv4 /g" $tmpcycle
         sed -i "s/vfpv,/vfpv4,/g" $tmpcycle
         sed -i "s/-Os/-O2/g" $tmpcycle
