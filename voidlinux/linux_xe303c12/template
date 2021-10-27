@@ -1,6 +1,6 @@
 # Template file for 'linux_xe303c12'
 pkgname=linux_xe303c12
-version=5.14.13
+version=5.14.15
 revision=1
 wrksrc="linux-${version}"
 short_desc="Linux kernel and modules and headers (${version%.*} for XE303C12 armv7hf samsung/google-snow Chromebook)"
@@ -8,7 +8,7 @@ maintainer="none"
 license="GPL-2.0-only"
 homepage="https://www.kernel.org"
 distfiles="https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-${version}.tar.xz"
-checksum=832b78b4c098a99f5c0c50160e3fa58a81412419734c5e8e1b04342fcb4b964d
+checksum=74f39a0c69e9d7c94d290515645396725e3ce3667b85baf4b3c3f6f303c7a406
 python_version=3
 patch_args="-Np1"
 
