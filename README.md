@@ -45,7 +45,7 @@ or [my old mod of that script](https://github.com/quarkscript/xe303c12_play_linu
 
 > X may not work on "console"-s disk images until an updated version of mesa is released on the appropriate distro
 
- [empty disk image maker](edim) can be used to create a disk image of the required size, then just copy the contents of the root partition into it and write the kernel image to the kernel partition.
+ [empty disk image maker](edim) can be used to create a disk image of the required size, then just copy the contents of the root partition into it and write the kernel image to the kernel partition. [demo](https://youtu.be/ALJR2doOipc)
 
 #### Example of run under hypervisor (qemu)
 ```
