@@ -1,6 +1,6 @@
 pkgname=ffmpeg
 pkgver=4.4
-pkgrel=4
+pkgrel=5
 epoch=2
 pkgdesc='Complete solution to record, convert and stream audio and video'
 arch=(armv7h)
@@ -110,16 +110,17 @@ build() {
 
   #[[ $CARCH == "armv7h" || $CARCH == "aarch64" ]] && CONFIG='--host-cflags="-fPIC"'
   #[[ $CARCH == "armv6h" || $CARCH == 'arm' ]] && CONFIG='--extra-libs="-latomic"'
-CONFIG='--extra-libs=-latomic'
  
 of=' -march=armv7-a+mp+neon-vfpv4 -mfpu=neon-vfpv4 --param l1-cache-size=64 --param l2-cache-size=1024 -O3 -fPIC '
+#CONFIG="--host-cflags='$of'"
 export CXXFLAGS+="$of"
 export CFLAGS+="$of"
 
+#./configure \
+    #--extra-cflags="$of" \
+    #--extra-cxxflags="$of" \
+    #--optflags="$of"  \
 ./configure \
-    --extra-cflags="$of" \
-    --extra-cxxflags="$of" \
-    --optflags="$of"  \
     \
     --prefix=/usr \
     --disable-debug \
