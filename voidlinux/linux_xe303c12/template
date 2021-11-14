@@ -1,6 +1,6 @@
 # Template file for 'linux_xe303c12'
 pkgname=linux_xe303c12
-version=5.14.15
+version=5.15.2
 revision=1
 wrksrc="linux-${version}"
 short_desc="Linux kernel and modules and headers (${version%.*} for XE303C12 armv7hf samsung/google-snow Chromebook)"
@@ -8,7 +8,7 @@ maintainer="none"
 license="GPL-2.0-only"
 homepage="https://www.kernel.org"
 distfiles="https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-${version}.tar.xz"
-checksum=74f39a0c69e9d7c94d290515645396725e3ce3667b85baf4b3c3f6f303c7a406
+checksum=5634033a4981be42d3259f50d5371a2cdc9ace5d9860da67a2879630533ab175
 python_version=3
 patch_args="-Np1"
 
@@ -57,9 +57,9 @@ do_configure() {
 	
 	# apply patches in a specific way
 
-	cp $FILESDIR/patch-5.14-rc5-armv7-x7.diff ../
-	echo $(git apply ../patch-5.14-rc5-armv7-x7.diff)
-		rm -f ../patch-5.14-rc5-armv7-x7.diff
+	cp $FILESDIR/patch-5.15-rc7-armv7-x7.diff ../
+	echo $(git apply ../patch-5.15-rc7-armv7-x7.diff)
+		rm -f ../patch-5.15-rc7-armv7-x7.diff
 	cp $FILESDIR/0004-fix-mvsdio-eMMC-timing.patch ../
 	git apply ../0004-fix-mvsdio-eMMC-timing.patch
 		rm -f ../0004-fix-mvsdio-eMMC-timing.patch
