@@ -21,6 +21,7 @@ The same, but for void-linux. Second forked source is [void-packages](https://gi
 
 - [kernel](voidlinux/linux_xe303c12) - Void-linux package build script can be cross-compiled with [xbps-src](https://github.com/void-linux/void-packages) into void-linux package with armv7hf-glibc or armv7hf-musl architectures.
 - [firmware](voidlinux/linux_xe303c12_firmware) - Void-linux package build script. It collect a couple of necessary files and  takes up less space than a regular linux-firmware package.
+- [mesa](voidlinux/xf86-video-armsoc-git) - Void-linux package build script, forked from [void-packages](https://github.com/void-linux/void-packages)
 - [xorg video driver](voidlinux/xf86-video-armsoc-git) - Void-linux package build script, forked from [archlinux|ARM](https://github.com/archlinuxarm/PKGBUILDs/tree/master/alarm/xf86-video-armsoc-git) (at least it works for xfce4)
 
 > Some already builded packages can be found at [releases](https://github.com/quarkscript/linux-armv7-xe303c12-only/releases)
@@ -34,18 +35,19 @@ or [my old mod of that script](https://github.com/quarkscript/xe303c12_play_linu
 #### Recovery / install / test disk images
 - based on archlinux|ARM 
   - [disk image 1](https://drive.google.com/u/0/uc?id=1O94t7i_gBygdlDLsbyp9D8q7T425sgpM&export=download) ( console, works on baremetal and under qemu )
-  - [disk image 3](https://drive.google.com/u/0/uc?id=1qo4ExfRGK1Sl-Vv_2SRPctM7H7I330y0&export=download)
+  - [disk image 2](https://drive.google.com/u/0/uc?id=1qo4ExfRGK1Sl-Vv_2SRPctM7H7I330y0&export=download)
 - based on Void-linux
-  - [glibc disk image](https://drive.google.com/u/0/uc?id=1NrCXfS1krKrBMtfB4m1oucXhcHCUskDM&export=download) ( kernel 5.13.13 / console )
-  - [glibc disk image 2](https://drive.google.com/u/0/uc?id=1prHyOl-S5euqLSqer6FYr2tPVegYzjWv&export=download) (autologin to X)
-  - [musl disk image](https://drive.google.com/u/0/uc?id=1b-m4jN2mhNCJIXiOvEJd8gTNfFtY6gq5&export=download) ( kernel 5.13.13 / console )
-  - [musl disk image 2](https://drive.google.com/u/0/uc?id=1VCeMJ8nL8YOCyVMhgLTxi8Vvlqvva7Sg&export=download) (autologin to X)
+  - [glibc disk image 1](https://drive.google.com/u/0/uc?id=1lfwUbqRVG0aSsfNXZBHCmcUbHGK7Cd5W&export=download) ( kernel 5.15.2 / console )
+  - [glibc disk image 2](https://drive.google.com/u/0/uc?id=14y9IOrN4us97aT-5dji7Q8zdkxWOjGmZ&export=download) ( kernel 5.15.2 / autologin to xfce4 )
+  - [glibc test disk image 3](https://drive.google.com/u/0/uc?id=1Tg6Z8G87pYsZdqyU8wWkk71evN80y5oY&export=download) ( kernel 5.15.2 / autologin to xfce4 + lxqt, plasma and so on)
+  - [musl disk image 1](https://drive.google.com/u/0/uc?id=1x8jSyQsz-9eYN_zgGciwHBAAJdVFaFD6&export=download) ( kernel 5.15.2 / console )
+  - [musl disk image 2](https://drive.google.com/u/0/uc?id=1b9TusWJabpmkotVppXr0pOkNBqqq-j1Z&export=download) ( kernel 5.15.2 / autologin to xfce4 )
 - based on Kali linux
   - [disk image](https://drive.google.com/u/0/uc?id=1meNMjZaphdySOPjudi1tr-4pjXMNLCBm&export=download) ( kernel 5.13.8 / autologin to X)
 
-> X may not work on "console"-s disk images until an updated version of mesa is released on the appropriate distro
+> X may not work on "console"-s disk images until an fixed version of mesa is released on the appropriate distro
 
- [empty disk image maker](edim) can be used to create a disk image of the required size, then just copy the contents of the root partition into it and write the kernel image to the kernel partition. [demo](https://youtu.be/ALJR2doOipc)
+ [empty disk image maker](edim) can be used to create an empty disk image of the required size [demonstration](https://youtu.be/ALJR2doOipc)
 
 #### Example of run under hypervisor (qemu)
 ```
