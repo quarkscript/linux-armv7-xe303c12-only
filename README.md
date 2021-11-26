@@ -29,7 +29,7 @@ The same, but for void-linux. Second forked source is [void-packages](https://gi
 
 #### Kali linux
 To try Kali on that device you may use [official build script from Kali developers](https://gitlab.com/kalilinux/build-scripts/kali-arm/-/blob/master/chromebook-arm-exynos.sh) 
-or [my old mod of that script](https://github.com/quarkscript/xe303c12_play_linux)
+or [my rewrited mod of that script](https://github.com/quarkscript/xe303c12_play_linux)
 
 
 #### Recovery / install / test disk images
@@ -44,6 +44,7 @@ or [my old mod of that script](https://github.com/quarkscript/xe303c12_play_linu
   - [musl disk image 2](https://drive.google.com/u/0/uc?id=1b9TusWJabpmkotVppXr0pOkNBqqq-j1Z&export=download) ( kernel 5.15.2 / autologin to xfce4 )
 - based on Kali linux
   - [disk image](https://drive.google.com/u/0/uc?id=1meNMjZaphdySOPjudi1tr-4pjXMNLCBm&export=download) ( kernel 5.13.8 / autologin to X)
+  - [disk image 2](https://drive.google.com/u/0/uc?id=1tN4aJ3Pe9iP6f9tkd5llpXPbLvAqvjK2&export=download) ( kernel 5.15.5 /console, minimal )
 
 > X may not work on "console"-s disk images until an fixed version of mesa is released on the appropriate distro
 
