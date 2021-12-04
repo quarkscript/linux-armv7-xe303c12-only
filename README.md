@@ -1,4 +1,4 @@
-### Custom linux kernel for old armv7 [chromebook](https://www.samsung.com/us/support/owners/product/chromebook-xe303c12)
+### Custom linux kernel for old armv7 [chromebook](https://www.samsung.com/us/support/computing/chrome-device/chromebook/chromebook/?modelCode=XE303C12-A01US)
 
 >[short demo](https://www.youtube.com/watch?v=hZt1fPso0e0) of running linux on this device.
 
