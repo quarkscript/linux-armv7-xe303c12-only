@@ -52,7 +52,7 @@ or [my rewrited mod of that script](https://github.com/quarkscript/xe303c12_play
 
 #### Example of run under hypervisor (qemu)
 ```
-qemu-system-arm -machine virt -m 1024 -kernel zImage -append "root=/dev/vda2" -serial stdio -drive if=none,file=armv7hf_q.img,format=raw,id=hd0 -device virtio-blk-device,drive=hd0 -netdev user,id=net0 -device virtio-net-device,netdev=net0 
+qemu-system-arm -machine virt,highmem=off -m 1024 -kernel zImage -append "root=/dev/vda2" -serial stdio -drive if=none,file=armv7hf_q.img,format=raw,id=hd0 -device virtio-blk-device,drive=hd0 -netdev user,id=net0 -device virtio-net-device,netdev=net0 
 ```
 ![](example.gif)
 
