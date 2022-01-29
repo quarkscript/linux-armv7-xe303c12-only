@@ -4,7 +4,7 @@ pkgbase=linux-xe303c12
 pkgname=$pkgbase
 _kernelname=${pkgbase#linux}
 _desc="ARMv7 XE303C12-platform"
-pkgver=5.15.12
+pkgver=5.15.18
 _srcname=linux-${pkgver}
 pkgrel=1
 rcnver=5.15.0
@@ -113,7 +113,7 @@ if [ "$(whoami)" == "root" ]; then
 echo "
 You may re-sign kernel and customize kernel boot string. 
 Regular user do not need it, so it is safe to press n.
-Do you want to do this? (y/n)
+Do you want to do this? (y/N)
 "
 read -r tmpvar1 
 if $(echo $tmpvar1 | grep -q [Yy]); then
@@ -124,13 +124,14 @@ $bootcmd
 
 Be very careful, without init=/sbin/init root=PARTUUID=%U/PARTNROFF=1 
 or something like that your could get a bootfail.
-Now you may specify a new one or just press Enter"
+Now you may specify a new one or just press Enter
+"
     tmpvar2=""
     read -r tmpvar2
     if [ ! -z "$tmpvar2" ]; then
         bootcmd="$tmpvar2"
     else
-        echo "Will be used default boot string
+        echo "  Will be used default boot string
 	"
     fi
 
@@ -194,12 +195,12 @@ Now you may specify a new one or just press Enter"
         
         echo $bootcmd > /tmp/cmdline
         
-        # backup default kernel.img
-        mv -f /boot/kernel.img /boot/backup_kernel.img
+        # backup default kernel_image
+        mv -f /boot/kernel_image /boot/backup_kernel_image
         
         # final step
         vbutil_kernel \
-        --pack /boot/kernel.img \
+        --pack /boot/kernel_image \
         --version 1 \
         --vmlinuz /tmp/vmlinux.uimg \
         --arch arm \
@@ -230,40 +231,67 @@ fi
   echo ""
   if [ "$krnprtc" -eq 0 ]; then
     echo "Chrome OS kernel partition did not detected." 
-    echo "You must reflash kernel manually."
+    echo "  You may need to flash kernel_image manually."
   elif [ "$krnprtc" -eq 1 ]; then
-    echo "Finded ChromeOs kernel partition - $krnprts"
-    echo "Do you want to flash a new kernel to it? (y/n)"
+    if $(echo $krnprts | grep -q mmcblk0); then
+	pr_part_type="# usually internal MMC"
+    elif $(echo $krnprts | grep -q mmcblk1); then
+	pr_part_type="# usually SD-card"
+    elif $(echo $krnprts | grep -q sd); then
+	pr_part_type="# usually USB-disk"
+    else
+	pr_part_type="# unknown disk type"
+    fi
+    echo "Finded ChromeOs kernel partition - $krnprts $pr_part_type"
+    echo "  Do you want to flash a new kernel to it? (y/N)"
     read -r shouldwe
     if [[ $shouldwe =~ ^([yY][eE][sS]|[yY])$ ]]; then
-      dd if=/boot/kernel.img of=/dev/$krnprts
+      echo make kernel partition backup to /boot/krn_pt_bk.gz
+      dd if=/dev/$krnprts | gzip --best > /boot/krn_pt_bk.gz
+      echo flash kernel
+      dd if=/boot/kernel_image of=/dev/$krnprts
       sync
     else
       echo "You may flash kernel manually like:"
-      echo "dd if=/boot/kernel.img of=/dev/$krnprts"
+      echo "dd if=/boot/kernel_image of=/dev/$krnprts"
     fi
   else
     echo "Finded more than one Chrome OS kernel partition."
-    echo "You need to select next action
-    "
-    echo "0 for do not flash"
+    echo "Current root is /dev/$(mount | grep " / " | sed "s/.*dev\///g" | sed "s/ .*//g")"
+    echo "You need to specify next action"
+    echo "  0 for do not flash"
     numpart=0
     for i in $krnprts; do
       numpart=$(($numpart+1))
-      echo "$numpart for flash $i partition"
+      if $(echo $i | grep -q mmcblk0); then
+	pr_part_type="# usually internal MMC"
+      elif $(echo $i | grep -q mmcblk1); then
+	pr_part_type="# usually SD-card"
+      elif $(echo $i | grep -q sd); then
+	pr_part_type="# usually USB-disk"
+      else
+	pr_part_type="# unknown disk type"
+      fi
+      echo "  $numpart for flash $i partition $pr_part_type"
     done
-    echo ""
-    echo "Wrong partition may lead to bootfail. Be aware!"
+    #echo ""
+    echo "Wrong partition may lead to bootfail. Be aware!
+"
     read -r shouldwe
     if [ $shouldwe -gt 0 ]&&[ $shouldwe -le $numpart ]; then
       numpart=0
       for i in $krnprts; do
         numpart=$(($numpart+1))
         if [ $numpart -eq $shouldwe ]; then
-          dd if=/boot/kernel.img of=/dev/$i
+          echo make kernel partition backup to /boot/krn_pt_bk.gz
+          dd if=/dev/$i | gzip --best > /boot/krn_pt_bk.gz
+          echo flash kernel
+          dd if=/boot/kernel_image of=/dev/$i
           sync
         fi
       done
+    else
+      echo "  Ok, you may flash kernel manually"
     fi
   fi
 else
@@ -302,7 +330,7 @@ post_upgrade() {
 
 post_remove() {
   rm -f boot/initramfs-linux.img
-  rm -f boot/backup_kernel.img
+  rm -f boot/backup_kernel_image
 }
 ' >../../${pkgbase}.pkg
   
@@ -430,9 +458,9 @@ Exec = /usr/bin/depmod ${_kernver}
   cp ../kernel.its .
   mkimage -D "-I dts -O dtb -p 2048" -f kernel.its vmlinux.uimg
   dd if=/dev/zero of=bootloader.bin bs=512 count=1
-  echo 'console=tty0 init=/sbin/init root=PARTUUID=%U/PARTNROFF=1 rootwait rw noinitrd zswap.compressor=zstd zswap.max_pool_percent=40 audit=0' > cmdline
+  echo 'console=tty0 init=/sbin/init root=PARTUUID=%U/PARTNROFF=1 rootwait rw noinitrd zswap.compressor=zstd zswap.max_pool_percent=40 audit=0 quiet loglevel=1 ' > cmdline
   vbutil_kernel \
-    --pack kernel.img \
+    --pack kernel_image \
     --version 1 \
     --vmlinuz vmlinux.uimg \
     --arch arm \
@@ -441,5 +469,5 @@ Exec = /usr/bin/depmod ${_kernver}
     --config cmdline \
     --bootloader bootloader.bin
   #mkdir -p "${pkgdir}/boot"
-  cp kernel.img "${pkgdir}/boot"       
+  cp kernel_image "${pkgdir}/boot"       
 }
