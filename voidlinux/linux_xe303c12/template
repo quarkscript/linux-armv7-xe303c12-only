@@ -1,6 +1,6 @@
 # Template file for 'linux_xe303c12'
 pkgname=linux_xe303c12
-version=5.15.12
+version=5.15.18
 revision=1
 wrksrc="linux-${version}"
 short_desc="Linux kernel and modules and headers (${version%.*} for XE303C12 armv7hf samsung/google-snow Chromebook)"
@@ -8,7 +8,7 @@ maintainer="none"
 license="GPL-2.0-only"
 homepage="https://www.kernel.org"
 distfiles="https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-${version}.tar.xz"
-checksum=7de919772b62647591527e904e3b3583783381a29d812404f58a222484e751a0
+checksum=21dd70e84d776a3403836d435bc523059a43f5bce72c75728981126dd9786c5e
 python_version=3
 patch_args="-Np1"
 
@@ -146,9 +146,9 @@ do_install() {
     cp ${FILESDIR}/kernel_data_key.vbprivk .
     mkimage -D "-I dts -O dtb -p 2048" -f kernel.its vmlinux.uimg
     dd if=/dev/zero of=bootloader.bin bs=512 count=1
-    echo 'console=tty0 init=/usr/bin/runit-init root=PARTUUID=%U/PARTNROFF=1 rootwait rw noinitrd zswap.compressor=zstd zswap.max_pool_percent=40 audit=0' > cmdline
+    echo 'console=tty0 init=/usr/bin/runit-init root=PARTUUID=%U/PARTNROFF=1 rootwait rw noinitrd zswap.compressor=zstd zswap.max_pool_percent=40 audit=0 quiet loglevel=1 ' > cmdline
     vbutil_kernel \
-        --pack vmlinux.kpart \
+        --pack kernel_image \
         --version 1 \
         --vmlinuz vmlinux.uimg \
         --arch arm \
@@ -156,7 +156,7 @@ do_install() {
         --signprivate kernel_data_key.vbprivk \
         --config cmdline \
         --bootloader bootloader.bin
-    vinstall vmlinux.kpart 644 boot
+    vinstall kernel_image 644 boot
     
     vinstall ${FILESDIR}/post-install 755 etc/kernel.d/post-install 10-flashkernel
     
