@@ -1,33 +1,36 @@
 #!/bin/bash
+if [ "$(whoami)" == "root" ]; then
 
-## re-sign kernel in case you want to change bootstring
-    echo "
+# resign kernel
+
+echo "
 You may re-sign kernel and customize kernel boot string. 
-Regular user do not need it, so it is safe to enter 'n'.
-Do you want to do this? (y/n)
+Regular user do not need it, so it is safe to press n.
+Do you want to do this? (y/N)
 "
-    read -r tmpvar1 
-    if $(echo $tmpvar1 | grep -q [Yy]); then
-        bootcmd='console=tty0 init=/usr/bin/runit-init root=PARTUUID=%U/PARTNROFF=1 rootwait rw noinitrd zswap.compressor=zstd zswap.max_pool_percent=40 audit=0'
-        echo "default bootcmd is
-        
+read -r tmpvar1 
+if $(echo $tmpvar1 | grep -q [Yy]); then
+    bootcmd='console=tty0 init=/usr/bin/runit-init root=PARTUUID=%U/PARTNROFF=1 rootwait rw noinitrd zswap.compressor=zstd zswap.max_pool_percent=40 audit=0'
+    echo "default bootcmd is
+
 $bootcmd
 
 Be very careful, without init=/usr/bin/runit-init root=PARTUUID=%U/PARTNROFF=1 
 or something like that your could get a bootfail.
-Now you may specify a new one or just press Enter"
-        tmpvar2=""
-        read -r tmpvar2
-        if [ ! -z "$tmpvar2" ]; then
-            bootcmd="$tmpvar2"
-	else
-	    echo will be used default boot string
-	fi
-            
-        # make kernel.its
-        echo '
-/dts-v1/;
+Now you may specify a new one or just press Enter
+"
+    tmpvar2=""
+    read -r tmpvar2
+    if [ ! -z "$tmpvar2" ]; then
+        bootcmd="$tmpvar2"
+    else
+        echo "  Will be used default boot string
+	"
+    fi
 
+    # make kernel.its
+    echo '
+/dts-v1/;
 / {
     description = "Chrome OS kernel image with one or more FDT blobs";
     #address-cells = <1>;
@@ -75,35 +78,36 @@ Now you may specify a new one or just press Enter"
         };
     };
 };
-            '> /tmp/kernel.its
-            
-            #
-            mkimage -D "-I dts -O dtb -p 2048" -f /tmp/kernel.its /tmp/vmlinux.uimg
+        '> /tmp/kernel.its
         
-            # make empty bootloader
-            dd if=/dev/zero of=/tmp/bootloader.bin bs=512 count=1
+        #
+        mkimage -D "-I dts -O dtb -p 2048" -f /tmp/kernel.its /tmp/vmlinux.uimg
+                
+        # make empty bootloader
+        dd if=/dev/zero of=/tmp/bootloader.bin bs=512 count=1
         
-            echo $bootcmd > /tmp/cmdline
-            
-            # backup default vmlinux.kpart
-            mv -f /boot/vmlinux.kpart /boot/backup_vmlinux.kpart
-            
-            # final step
-            vbutil_kernel \
-            --pack /boot/vmlinux.kpart \
-            --version 1 \
-            --vmlinuz /tmp/vmlinux.uimg \
-            --arch arm \
-            --keyblock /boot/resign/kernel.keyblock \
-            --signprivate /boot/resign/kernel_data_key.vbprivk \
-            --config /tmp/cmdline \
-            --bootloader /tmp/bootloader.bin
-            
-            # clear used files
-            rm -f /tmp/vmlinux.uimg /tmp/kernel.keyblock /tmp/kernel_data_key.vbprivk /tmp/cmdline /tmp/bootloader.bin
-    fi
-  
-## flash kernel
+        echo $bootcmd > /tmp/cmdline
+        
+        # backup default kernel_image
+        mv -f /boot/kernel_image /boot/backup_kernel_image
+        
+        # final step
+        vbutil_kernel \
+        --pack /boot/kernel_image \
+        --version 1 \
+        --vmlinuz /tmp/vmlinux.uimg \
+        --arch arm \
+        --keyblock /boot/reflash/kernel.keyblock \
+        --signprivate /boot/reflash/kernel_data_key.vbprivk \
+        --config /tmp/cmdline \
+        --bootloader /tmp/bootloader.bin
+        
+        # clear used files
+        rm -f /tmp/vmlinux.uimg /tmp/cmdline /tmp/bootloader.bin
+fi
+
+# flash kernel
+
   krnprts=""
   krnprtc=0
   for i in $(ls /dev | grep -x --regexp="mmcblk[0-9]" --regexp="sd[a-z]" --regexp="vd[a-z]"); do
@@ -119,43 +123,73 @@ Now you may specify a new one or just press Enter"
   
   echo ""
   if [ "$krnprtc" -eq 0 ]; then
-    echo "ChromeOs kernel partition did not detected." 
-    echo "You must reflash kernel manually."
+    echo "Chrome OS kernel partition did not detected." 
+    echo "  You may need to flash kernel_image manually."
   elif [ "$krnprtc" -eq 1 ]; then
-    echo "Finded ChromeOs kernel partition - $krnprts"
-    echo "Do you want to flash a new kernel to it? (y/n)"
+    if $(echo $krnprts | grep -q mmcblk0); then
+	pr_part_type="# usually internal MMC"
+    elif $(echo $krnprts | grep -q mmcblk1); then
+	pr_part_type="# usually SD-card"
+    elif $(echo $krnprts | grep -q sd); then
+	pr_part_type="# usually USB-disk"
+    else
+	pr_part_type="# unknown disk type"
+    fi
+    echo "Finded ChromeOs kernel partition - $krnprts $pr_part_type"
+    echo "  Do you want to flash a new kernel to it? (y/N)"
     read -r shouldwe
     if [[ $shouldwe =~ ^([yY][eE][sS]|[yY])$ ]]; then
-      dd if=/boot/vmlinux.kpart of=/dev/$krnprts
+      echo make boot partition backup to /boot/krn_pt_bk.gz
+      dd if=/dev/$krnprts | gzip --best > /boot/krn_pt_bk.gz
+      echo flash kernel
+      dd if=/boot/kernel_image of=/dev/$krnprts
       sync
     else
       echo "You may flash kernel manually like:"
-      echo "dd if=/boot/vmlinux.kpart of=/dev/$krnprts"
+      echo "dd if=/boot/kernel_image of=/dev/$krnprts"
     fi
   else
-    echo "Finded more than one ChromeOs kernel partition."
-    echo "You need to select next action
-    "
-    echo "0 for do not flash"
+    echo "Finded more than one Chrome OS kernel partition."
+    echo "Current root is /dev/$(mount | grep " / " | sed "s/.*dev\///g" | sed "s/ .*//g")"
+    echo "You need to specify next action"
+    echo "  0 for do not flash"
     numpart=0
     for i in $krnprts; do
       numpart=$(($numpart+1))
-      echo "$numpart for flash $i partition"
+      if $(echo $i | grep -q mmcblk0); then
+	pr_part_type="# usually internal MMC"
+      elif $(echo $i | grep -q mmcblk1); then
+	pr_part_type="# usually SD-card"
+      elif $(echo $i | grep -q sd); then
+	pr_part_type="# usually USB-disk"
+      else
+	pr_part_type="# unknown disk type"
+      fi
+      echo "  $numpart for flash $i partition $pr_part_type"
     done
-    echo ""
-    echo "Wrong partition may lead to bootfail or disk fail. Be aware!"
+    #echo ""
+    echo "Wrong partition may lead to bootfail. Be aware!
+"
     read -r shouldwe
     if [ $shouldwe -gt 0 ]&&[ $shouldwe -le $numpart ]; then
       numpart=0
       for i in $krnprts; do
         numpart=$(($numpart+1))
         if [ $numpart -eq $shouldwe ]; then
-          dd if=/boot/vmlinux.kpart of=/dev/$i
+          echo make boot partition backup to /boot/krn_pt_bk.gz
+          dd if=/dev/$i | gzip --best > /boot/krn_pt_bk.gz
+          echo flash kernel
+          dd if=/boot/kernel_image of=/dev/$i
           sync
         fi
       done
+    else
+      echo "  Ok, you may flash kernel manually"
     fi
   fi
+else
+  echo superuser rights required
+fi
 
 echo '
 to repeat this actions run /etc/kernel.d/post-install/10-flashkernel with root priveleges
