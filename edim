@@ -3,7 +3,7 @@
 if [ -z $1 ]||[ $1 == "-h" ]||[ $1 == "-help" ]||[ $1 == "--help" ]; then
     echo "
 ## Crome Os -like empty disk image maker
-## It creates a disk image with only kernel and root partitions,
+## It creates a disk image with kernel and root partitions only,
 ## for other scheme use cgpt manually.
 ##
 ## use: $0 'dsk size in Mb '
@@ -135,8 +135,8 @@ EOF
     
     echo "to unmount root run
     sudo umount root
-to flash kernel.bin run
-    sudo dd if='path to kernel.bin' of=$bootp
+to flash kernel_image run
+    sudo dd if='path to kernel_image' of=$bootp
 to remove loop devices run
     sudo kpartx -dv $loopdevice
     sudo losetup -d $loopdevice"
