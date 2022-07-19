@@ -1,0 +1,87 @@
+# repack devuan kernel package to archlinux|ARM package
+
+pkgbase=linux-xe303c12
+pkgname=$pkgbase
+_kernelname=${pkgbase#linux}
+_desc="ARMv7 XE303C12-platform"
+pkgver=5.15.55
+_srcname=linux-${pkgver}
+pkgrel=1
+arch=('armv7h') 
+# arch=('any') ## you may build package at any architecture, to do this switch arch to any
+url="http://www.kernel.org/"
+license=('GPL2')
+options=('!strip')
+source=("linux-kernel-xe303c12-${pkgver}.deb")
+md5sums=('SKIP')
+
+package() {
+  pkgdesc="The Linux Kernel, flash image and modules for XE303C12 (repackaged from deb)"
+  depends=('coreutils' 'kmod' 'uboot-tools' 'vboot-utils')
+  optdepends=('linux-xe303c12-firmware: contains the necessary firmwares for the xe303c12 chromebook, takes up 5M or something' 
+    'linux-firmware: contains all available firmwares, takes up 500M or something'
+    'crda: to set the correct wireless channels of your country' )
+  backup=("etc/mkinitcpio.d/${pkgbase}.preset")
+  provides=("linux=${pkgver}" "WIREGUARD-MODULE" )
+  
+  _kernver="$pkgver-$pkgrel"
+  
+  cd "${pkgdir}"
+  tar xf "${srcdir}/data.tar.xz"
+  mv lib usr/lib
+  rm -f usr/lib/modules/5.*/build
+  rm -f usr/lib/modules/5.*/source
+  mv -f "${pkgdir}/boot/reflash/kernel_install" "${pkgdir}/boot/reflash/kerninst"
+  chmod +x "${pkgdir}/boot/reflash/kerninst"
+
+## gen package script
+echo '
+post_install () {
+  /boot/reflash/kerninst
+  echo "
+You may repeat this operations by runing /boot/reflash/kerninst
+  "
+}
+post_upgrade() {
+  /boot/reflash/kerninst
+  echo "
+You may repeat this operations by runing /boot/reflash/kerninst
+  "
+}
+
+post_remove() {
+  rm -f boot/initramfs-linux.img
+  rm -f boot/backup_kernel_image
+}
+' >../../${pkgbase}.pkg
+  
+true && install=${pkgbase}.pkg   
+
+## install mkinitcpio preset file...
+echo "# mkinitcpio preset file for the '${pkgbase}' package
+
+#ALL_config='/etc/mkinitcpio.conf'
+#ALL_kver='${_kernver}'
+
+#PRESETS=('default')
+
+#default_config='/etc/mkinitcpio.conf'
+#default_image='/boot/initramfs-linux.img'
+#default_options=''
+" | install -Dm644 /dev/stdin "${pkgdir}/etc/mkinitcpio.d/${pkgbase}.preset"
+    
+## install pacman hooks
+echo "[Trigger]
+Type = File
+Operation = Install
+Operation = Upgrade
+Operation = Remove
+Target = usr/lib/modules/${pkgver}/*
+
+[Action]
+Description = Updating ${pkgbase} module dependencies...
+When = PostTransaction
+Exec = /usr/bin/depmod -b /usr ${pkgver}
+" | install -Dm644 /dev/stdin "${pkgdir}/usr/share/libalpm/hooks/60-${pkgbase}.hook"
+
+}
