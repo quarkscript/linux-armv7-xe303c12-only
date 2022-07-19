@@ -22,7 +22,7 @@ The same, but for void-linux. Second forked source is [void-packages](https://gi
 - [kernel](voidlinux/linux_xe303c12) - Void-linux package build script can be cross-compiled with [xbps-src](https://github.com/void-linux/void-packages) into void-linux package with armv7hf-glibc or armv7hf-musl architectures.
 - [firmware](voidlinux/linux_xe303c12_firmware) - Void-linux package build script. It collect a couple of necessary files and  takes up less space than a regular linux-firmware package.
 - [mesa](voidlinux/xf86-video-armsoc-git) - Void-linux package build script, forked from [void-packages](https://github.com/void-linux/void-packages/tree/master/srcpkgs/mesa)
-- [xorg video driver](voidlinux/xf86-video-armsoc-git) - Void-linux package build script, forked from [archlinux|ARM](https://github.com/archlinuxarm/PKGBUILDs/tree/master/alarm/xf86-video-armsoc-git) (at least it works for xfce4)
+- [xorg video driver](voidlinux/xf86-video-armsoc-git) - Void-linux package build script, forked from [archlinux|ARM](https://github.com/archlinuxarm/PKGBUILDs/tree/master/alarm/xf86-video-armsoc-git) (it looks like no more required)
 
 > Some already builded packages can be found at [releases](https://github.com/quarkscript/linux-armv7-xe303c12-only/releases)
 
@@ -66,54 +66,43 @@ sudo umount dsk
 ```
 
 #### Example of cross-compiling Void-linux packages 
-(from any x86_64 linux)
+(looks like xbps is no longer part of void-packages so this example requires Linux with xbps installed or Void-linux)
 ``` 
-git clone git://github.com/void-linux/void-packages.git
+git clone https://github.com/void-linux/void-packages.git
 git clone https://github.com/quarkscript/linux-armv7-xe303c12-only.git
+
 cd void-packages/
 
 ## copy templates to src-dir
   cp -fr ../linux-armv7-xe303c12-only/voidlinux/linux_xe303c12 srcpkgs/
   cp -fr ../linux-armv7-xe303c12-only/voidlinux/linux_xe303c12_firmware srcpkgs/
-  cp -fr ../linux-armv7-xe303c12-only/voidlinux/xf86-video-armsoc-git srcpkgs/
     
-## downgrade uboot-tools template
-  sed -i "s/version=.*/version=2020.10/g" srcpkgs/u-boot-tools/template
-  sed -i "s/revision=.*/revision=1/g" srcpkgs/u-boot-tools/template
-  sed -i "s/checksum=.*/checksum=0d481bbdc05c0ee74908ec2f56a6daa53166cc6a78a0e4fac2ac5d025770a622/g" srcpkgs/u-boot-tools/template
-
 ##############################################################
 
-## make glibc kernel package
+## make glibc build env.
   ./xbps-src binary-bootstrap
-  ## build host uboot-tools package
-    ./xbps-src pkg u-boot-tools
+  
+## make glibc kernel package
   ./xbps-src -a armv7hf build linux_xe303c12
   ./xbps-src -a armv7hf pkg linux_xe303c12
 
 ## make glibc firmware package
   ./xbps-src -a armv7hf pkg linux_xe303c12_firmware
 
-## make glibc X- video driver package
-  ./xbps-src -a armv7hf pkg xf86-video-armsoc-git
-
 ##############################################################
 
-## make musl kernel package
+## make musl build env.
   ./xbps-src -m x86_64-musl binary-bootstrap x86_64-musl
-  ## build host-musl uboot-tools package
-    ./xbps-src -m x86_64-musl pkg uboot-mkimage
+
+## make musl kernel package
   ./xbps-src -m x86_64-musl -a armv7hf-musl build linux_xe303c12
   ./xbps-src -m x86_64-musl -a armv7hf-musl pkg linux_xe303c12 
 
 ## make musl firmware package
   ./xbps-src -m x86_64-musl -a armv7hf-musl pkg linux_xe303c12_firmware
-
-## make musl X- video driver package
-  ./xbps-src -m x86_64-musl -a armv7hf-musl pkg xf86-video-armsoc-git
+  
 ```
- Since the signing of the kernel may fails with the latest uboot-tools, downgrade of uboot-tools may be required.
 
- If you plan to re-sign kernel during installation then you will need to install a builded uboot-mkimage/uboot-tools firstly.
+ If you plan to re-sign kernel during installation then you will need to install a uboot-mkimage/uboot-tools firstly.
 
 > Be aware! Given scripts or packages are not officially supported by any mentioned Linux distributions.
