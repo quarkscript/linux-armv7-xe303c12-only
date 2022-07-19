@@ -1,4 +1,4 @@
-# repack devuan kernel package to archlinux|ARM package
+# repack devuan/debian/kali kernel package to archlinux|ARM package
 
 pkgbase=linux-xe303c12
 pkgname=$pkgbase
