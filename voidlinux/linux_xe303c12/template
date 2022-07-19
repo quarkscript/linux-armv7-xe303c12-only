@@ -1,6 +1,6 @@
 # Template file for 'linux_xe303c12'
 pkgname=linux_xe303c12
-version=5.15.18
+version=5.15.55
 revision=1
 wrksrc="linux-${version}"
 short_desc="Linux kernel and modules and headers (${version%.*} for XE303C12 armv7hf samsung/google-snow Chromebook)"
@@ -8,7 +8,7 @@ maintainer="none"
 license="GPL-2.0-only"
 homepage="https://www.kernel.org"
 distfiles="https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-${version}.tar.xz"
-checksum=21dd70e84d776a3403836d435bc523059a43f5bce72c75728981126dd9786c5e
+checksum=1ef6bd508b6c3af3bef2d5b337e4477254dba284c79e329aa38f9763ae3bfdcc
 python_version=3
 patch_args="-Np1"
 
@@ -25,7 +25,7 @@ noshlibprovides=yes
 preserve=yes
 
 hostmakedepends="tar xz bc elfutils-devel flex gmp-devel kmod libmpc-devel
-libressl-devel perl uboot-mkimage-2020.10_1 vboot-utils dtc cpio pahole git zstd"
+openssl-devel perl uboot-mkimage vboot-utils dtc cpio pahole git zstd"
 
 depends+="vboot-utils uboot-mkimage"
  
