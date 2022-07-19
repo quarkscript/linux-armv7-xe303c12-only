@@ -12,7 +12,8 @@ arch=('armv7h')
 url="http://www.kernel.org/"
 license=('GPL2')
 options=('!strip')
-source=("linux-kernel-xe303c12-${pkgver}.deb")
+source=("https://github.com/quarkscript/xe303c12_play_linux/releases/download/5.15.55-xe303c12/linux-kernel-xe303c12-5.15.55.deb")
+#source=("linux-kernel-xe303c12-${pkgver}.deb")
 md5sums=('SKIP')
 
 package() {
