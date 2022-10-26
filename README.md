@@ -43,6 +43,7 @@ or [my rewrited mod of that script](https://github.com/quarkscript/xe303c12_play
   - [musl test disk image 2](https://drive.google.com/u/0/uc?id=1b9TusWJabpmkotVppXr0pOkNBqqq-j1Z&export=download) ( kernel 5.15.2 / autologin to xfce4 )
 - debian based linux
   - [kali test disk image](https://drive.google.com/u/0/uc?id=1meNMjZaphdySOPjudi1tr-4pjXMNLCBm&export=download) ( kernel 5.13.8 / autologin to xfce4 )
+  - [another kali test disk image](https://drive.google.com/u/0/uc?id=1hWoAyJUZY_WY4f_cdS0vUKJbJC-8SNWU&export=download) ( kernel 5.15.55, 3800M, ext4 / gzip compressed / autologin to xfce as root )
   - [devuan test disk image](https://drive.google.com/u/0/uc?id=12rDOgfDg_YptOwp3wKWLqZjO5fxTWOe_&export=download) ( kernel 5.15.5 / autologin to lxqt )
   - [devuan test disk image 2](https://drive.google.com/u/0/uc?id=1Smkv6HW1iJC-Ycm49tVAKdKLLLC2f7gk&export=download) ( kernel 5.15.6 / autologin to xfce )
 
