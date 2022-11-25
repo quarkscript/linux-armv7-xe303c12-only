@@ -46,6 +46,7 @@ or [my rewrited mod of that script](https://github.com/quarkscript/xe303c12_play
   - [another kali test disk image](https://drive.google.com/u/0/uc?id=1hWoAyJUZY_WY4f_cdS0vUKJbJC-8SNWU&export=download) ( kernel 5.15.55, 3800M, ext4 / gzip compressed / autologin to xfce as root )
   - [devuan test disk image](https://drive.google.com/u/0/uc?id=12rDOgfDg_YptOwp3wKWLqZjO5fxTWOe_&export=download) ( kernel 5.15.5 / autologin to lxqt )
   - [devuan test disk image 2](https://drive.google.com/u/0/uc?id=1Smkv6HW1iJC-Ycm49tVAKdKLLLC2f7gk&export=download) ( kernel 5.15.6 / autologin to xfce )
+  - [devuan5-bunsen test disk image](https://drive.google.com/u/0/uc?id=1bsl5HNf0KUmaZoKGEfVpo1bt8EF0zh6Q&export=download) ( kernel 5.15.55, 3837M, btrfs / Devuan 5 + [bunsenlabs.org](https://bunsenlabs.org) 'beryllium' repo; installed: firefox-esr, thunar, openbox and bunsenlabs UI scripts / login: user, pass: q )
 - based on alpine linux
   - [alpine linux disk image](https://drive.google.com/u/0/uc?id=1bkuHLVmBzRPnqBOaZINz9zbVuA3BYrYa&export=download) (kernel 5.15.55 taken from void-musl / autologin to xfce4 / 1882M, btrfs, gzip compressed)
 
