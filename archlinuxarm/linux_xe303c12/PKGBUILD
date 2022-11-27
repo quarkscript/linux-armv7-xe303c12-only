@@ -4,7 +4,7 @@ pkgbase=linux-xe303c12
 pkgname=$pkgbase
 _kernelname=${pkgbase#linux}
 _desc="ARMv7 XE303C12-platform"
-pkgver=5.15.18
+pkgver=5.15.79
 _srcname=linux-${pkgver}
 pkgrel=1
 rcnver=5.15.0
@@ -53,18 +53,21 @@ build() {
   make ${MAKEFLAGS} prepare
   make ${MAKEFLAGS} menuconfig
 
-  ff=" -O2 -pipe -march=armv7-a+mp+neon-vfpv4 --param l1-cache-size=64 --param l2-cache-size=1024 -mfpu=neon-vfpv4 -fno-plt -faggressive-loop-optimizations -fguess-branch-probability -floop-nest-optimize -fomit-frame-pointer -fsel-sched-pipelining -fsel-sched-pipelining-outer-loops -fpredictive-commoning -fprefetch-loop-arrays -ftree-loop-optimize -floop-interchange -floop-unroll-and-jam -fpeel-loops -funswitch-loops -fvect-cost-model=dynamic -fsimd-cost-model=dynamic -fsplit-ivs-in-unroller -ftree-loop-ivcanon -ftree-loop-im "
+  #ff=" -O2 -pipe -march=armv7-a+mp+neon-vfpv4 --param l1-cache-size=64 --param l2-cache-size=1024 -mfpu=neon-vfpv4 -fno-plt -faggressive-loop-optimizations -fguess-branch-probability -floop-nest-optimize -fomit-frame-pointer -fsel-sched-pipelining -fsel-sched-pipelining-outer-loops -fpredictive-commoning -fprefetch-loop-arrays -ftree-loop-optimize -floop-interchange -floop-unroll-and-jam -fpeel-loops -funswitch-loops -fvect-cost-model=dynamic -fsimd-cost-model=dynamic -fsplit-ivs-in-unroller -ftree-loop-ivcanon -ftree-loop-im "
+  ff=" -O2 -pipe -march=armv7-a+mp+neon-vfpv4 --param l1-cache-size=64 --param l2-cache-size=1024 -mfpu=neon-vfpv4 -ftracer -funroll-loops -fprefetch-loop-arrays -fpredictive-commoning -fsel-sched-reschedule-pipelined"
 
   export CFLAGS+="$ff" 
   export CXXFLAGS+="$ff"
   
   echo force custom gcc flags
   for tmpcycle in $(find -name Makefile); do
-    sed -i "s/armv7-a/armv7-a+mp+neon-vfpv4 --param l1-cache-size=64 --param l2-cache-size=1024 -mfpu=neon-vfpv4 -fno-plt -faggressive-loop-optimizations -fguess-branch-probability -floop-nest-optimize -fomit-frame-pointer -fsel-sched-pipelining -fsel-sched-pipelining-outer-loops -fpredictive-commoning -fprefetch-loop-arrays -ftree-loop-optimize -floop-interchange -floop-unroll-and-jam -fpeel-loops -funswitch-loops -fvect-cost-model=dynamic -fsimd-cost-model=dynamic -fsplit-ivs-in-unroller -ftree-loop-ivcanon -ftree-loop-im /g" $tmpcycle
+    #sed -i "s/armv7-a/armv7-a+mp+neon-vfpv4 --param l1-cache-size=64 --param l2-cache-size=1024 -mfpu=neon-vfpv4 -fno-plt -faggressive-loop-optimizations -fguess-branch-probability -floop-nest-optimize -fomit-frame-pointer -fsel-sched-pipelining -fsel-sched-pipelining-outer-loops -fpredictive-commoning -fprefetch-loop-arrays -ftree-loop-optimize -floop-interchange -floop-unroll-and-jam -fpeel-loops -funswitch-loops -fvect-cost-model=dynamic -fsimd-cost-model=dynamic -fsplit-ivs-in-unroller -ftree-loop-ivcanon -ftree-loop-im /g" $tmpcycle
+    sed -i "s/armv7-a/armv7-a+mp+neon-vfpv4  --param l1-cache-size=64 --param l2-cache-size=1024 -O2 -ftracer /g" $tmpcycle
     sed -i "s/vfpv /vfpv4 /g" $tmpcycle
     sed -i "s/vfpv,/vfpv4,/g" $tmpcycle
     sed -i "s/-Os/-O2/g" $tmpcycle
-    sed -i "s/-O2/-O2 -march=armv7-a+mp+neon-vfpv4 --param l1-cache-size=64 --param l2-cache-size=1024 -mfpu=neon-vfpv4 -fno-plt -faggressive-loop-optimizations -fguess-branch-probability -floop-nest-optimize -fomit-frame-pointer -fsel-sched-pipelining -fsel-sched-pipelining-outer-loops -fpredictive-commoning -fprefetch-loop-arrays -ftree-loop-optimize -floop-interchange -floop-unroll-and-jam -fpeel-loops -funswitch-loops -fvect-cost-model=dynamic -fsimd-cost-model=dynamic -fsplit-ivs-in-unroller -ftree-loop-ivcanon -ftree-loop-im /g" $tmpcycle
+    sed -i "s/-O2/-O2 --param l1-cache-size=64 --param l2-cache-size=1024 -ftracer -funroll-loops -fprefetch-loop-arrays -fpredictive-commoning -fsel-sched-reschedule-pipelined /g" $tmpcycle
+    #sed -i "s/-O2/-O2 -march=armv7-a+mp+neon-vfpv4 --param l1-cache-size=64 --param l2-cache-size=1024 -mfpu=neon-vfpv4 -fno-plt -faggressive-loop-optimizations -fguess-branch-probability -floop-nest-optimize -fomit-frame-pointer -fsel-sched-pipelining -fsel-sched-pipelining-outer-loops -fpredictive-commoning -fprefetch-loop-arrays -ftree-loop-optimize -floop-interchange -floop-unroll-and-jam -fpeel-loops -funswitch-loops -fvect-cost-model=dynamic -fsimd-cost-model=dynamic -fsplit-ivs-in-unroller -ftree-loop-ivcanon -ftree-loop-im /g" $tmpcycle
 
   done
  
