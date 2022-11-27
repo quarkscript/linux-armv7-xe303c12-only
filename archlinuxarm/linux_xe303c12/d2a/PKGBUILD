@@ -4,7 +4,7 @@ pkgbase=linux-xe303c12
 pkgname=$pkgbase
 _kernelname=${pkgbase#linux}
 _desc="ARMv7 XE303C12-platform"
-pkgver=5.15.55
+pkgver=5.15.79
 _srcname=linux-${pkgver}
 pkgrel=1
 arch=('armv7h') 
@@ -12,7 +12,7 @@ arch=('armv7h')
 url="http://www.kernel.org/"
 license=('GPL2')
 options=('!strip')
-source=("https://github.com/quarkscript/xe303c12_play_linux/releases/download/5.15.55-xe303c12/linux-kernel-xe303c12-5.15.55.deb")
+source=("https://github.com/quarkscript/xe303c12_play_linux/releases/download/5.15.79-xe303c12/linux-kernel-xe303c12-5.15.79.deb")
 #source=("linux-kernel-xe303c12-${pkgver}.deb")
 md5sums=('SKIP')
 
