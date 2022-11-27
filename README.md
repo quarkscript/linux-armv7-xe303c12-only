@@ -31,35 +31,36 @@ The same, but for void-linux. Second forked source is [void-packages](https://gi
 To try Kali on that device you may use [official build script from Kali developers](https://gitlab.com/kalilinux/build-scripts/kali-arm/-/blob/master/chromebook-arm-exynos.sh) 
 or [my rewrited mod of that script](https://github.com/quarkscript/xe303c12_play_linux) Devuan linux disk image could be build with rewrited script too.
 
-#### Recovery / install / test disk images
+#### test disk images
+Disk images created for demonstration, testing and recovery things. For daily use user should tune it to his own needs and upsize it to used pendrive, sdcard and so on. 
+
+[empty disk image maker](edim) could be used to create an empty disk image of the required size [demonstration](https://youtu.be/ALJR2doOipc)
+
+Created disk images:
 - based on archlinux|ARM 
-  - [test disk image 1](https://drive.google.com/u/0/uc?id=1O94t7i_gBygdlDLsbyp9D8q7T425sgpM&export=download) ( console, works on baremetal and under qemu )
-  - [test disk image 2](https://drive.google.com/u/0/uc?id=1qo4ExfRGK1Sl-Vv_2SRPctM7H7I330y0&export=download) ( autologin to xfce4 )
+  - [minimal, console only (old)](https://drive.google.com/u/0/uc?id=1O94t7i_gBygdlDLsbyp9D8q7T425sgpM&export=download)
+  - [minimal, console only](https://drive.google.com/u/0/uc?id=1H7-WnYNJtQDMwrfvdIBnLnrswquFC1av&export=download)
+  - [with xfce4 DE](https://drive.google.com/u/0/uc?id=1yTRChwYdWFl-0z06p19kZ0leLGR2vEyp&export=download) [screenshot](pics/archlinuxarm_xfce4.png)
 - based on Void-linux
-  - [glibc test disk image 1](https://drive.google.com/u/0/uc?id=1lfwUbqRVG0aSsfNXZBHCmcUbHGK7Cd5W&export=download) ( kernel 5.15.2 / console )
-  - [glibc test disk image 2](https://drive.google.com/u/0/uc?id=14y9IOrN4us97aT-5dji7Q8zdkxWOjGmZ&export=download) ( kernel 5.15.2 / autologin to xfce4 )
-  - [glibc test disk image 3](https://drive.google.com/u/0/uc?id=1Tg6Z8G87pYsZdqyU8wWkk71evN80y5oY&export=download) ( kernel 5.15.2 / autologin to xfce4 + lxqt, plasma and so on)
-  - [musl test disk image 1](https://drive.google.com/u/0/uc?id=1x8jSyQsz-9eYN_zgGciwHBAAJdVFaFD6&export=download) ( kernel 5.15.2 / console )
-  - [musl test disk image 2](https://drive.google.com/u/0/uc?id=1b9TusWJabpmkotVppXr0pOkNBqqq-j1Z&export=download) ( kernel 5.15.2 / autologin to xfce4 )
+  - [glibc, minimal, console only](https://drive.google.com/u/0/uc?id=1m4GPpz1W4meUyvFn0byTxbK-zENSg96X&export=download)
+  - [glibc, with xfce4 DE](https://drive.google.com/u/0/uc?id=1ylcaJ4aiyN4Zl5GqmietmcGmgIhWoElo&export=download)
+  - [musl, minimal, console only](https://drive.google.com/u/0/uc?id=1H5JzkGVWHtZeh1a0CgZciRosZtVrSiZg&export=download)
+  - [musl, with xfce4 DE](https://drive.google.com/u/0/uc?id=18ExLAz0M_gnjUF4PvsBnDo-0EnA4XZ6h&export=download) [screenshot](pics/void_musl_xfce4.png)
 - based on debian linux
-  - [kali test disk image](https://drive.google.com/u/0/uc?id=1meNMjZaphdySOPjudi1tr-4pjXMNLCBm&export=download) ( kernel 5.13.8 / autologin to xfce4 )
-  - [another kali test disk image](https://drive.google.com/u/0/uc?id=1hWoAyJUZY_WY4f_cdS0vUKJbJC-8SNWU&export=download) ( kernel 5.15.55, 3800M, ext4 / gzip compressed / autologin to xfce as root )
-  - [devuan test disk image](https://drive.google.com/u/0/uc?id=12rDOgfDg_YptOwp3wKWLqZjO5fxTWOe_&export=download) ( kernel 5.15.5 / autologin to lxqt )
-  - [devuan test disk image 2](https://drive.google.com/u/0/uc?id=1Smkv6HW1iJC-Ycm49tVAKdKLLLC2f7gk&export=download) ( kernel 5.15.6 / autologin to xfce )
-  - [devuan5-bunsen test disk image](https://drive.google.com/u/0/uc?id=1bsl5HNf0KUmaZoKGEfVpo1bt8EF0zh6Q&export=download) ( kernel 5.15.55, 3837M, btrfs / Devuan 5 + [bunsenlabs.org](https://bunsenlabs.org) 'beryllium' repo; installed: firefox-esr, thunar, openbox and bunsenlabs UI scripts / login: user, pass: q )
+  - [Kali with xfce4 DE](https://drive.google.com/u/0/uc?id=1fW0oDNb44kXkEU_zrp_HtsZZtfphyetz&export=download)
+  - [Devuan with xfce4 DE](https://drive.google.com/u/0/uc?id=1KSgE-3G2GEBzcYhk_JleVYWl6m061GdI&export=download)
+  - [Devuan with lxqt DE](https://drive.google.com/u/0/uc?id=1Oil2eE-RrpP5I1kGCoTsw1JEqxeTgsNC&export=download) [screenshot](pics/devuan_lxqt_root.png)
+  - [Devuan5 with bunsenlabs UI scripts](https://drive.google.com/u/0/uc?id=1-obTOWKIbgRjQZDjjQazbOtPFHboeA8N&export=download) [screenshot](pics/devuan-bunsen.png)
 - based on alpine linux
-  - [alpine linux disk image](https://drive.google.com/u/0/uc?id=1bkuHLVmBzRPnqBOaZINz9zbVuA3BYrYa&export=download) (kernel 5.15.55 taken from void-musl / autologin to xfce4 / 1882M, btrfs, gzip compressed)
+  - [with xfce4 DE](https://drive.google.com/u/0/uc?id=108zWgPRvxzveNVtW6GChxux_jEziENZT&export=download) [screenshot](pics/alpine_xfce.png)
 
-
-> X may not work on "console"-s disk images until an fixed version of mesa is released on the appropriate distro
-
- [empty disk image maker](edim) can be used to create an empty disk image of the required size [demonstration](https://youtu.be/ALJR2doOipc)
+> disk images updated 27.11.2022
 
 #### Example of run under hypervisor (qemu)
 ```
 qemu-system-arm -machine virt,highmem=off -m 1024 -kernel zImage -append "root=/dev/vda2" -serial stdio -drive if=none,file=armv7hf_q.img,format=raw,id=hd0 -device virtio-blk-device,drive=hd0 -netdev user,id=net0 -device virtio-net-device,netdev=net0 
 ```
-![](example.gif)
+![](pics/example.gif)
 
  zImage could be extracted from second partition of disk image like:
 ```
@@ -70,7 +71,7 @@ sudo umount dsk
 ```
 
 #### Example of cross-compiling Void-linux packages 
-(looks like xbps is no longer part of void-packages so this example requires Linux with xbps installed or Void-linux)
+(looks like xbps is no longer part of void-packages so this example requires Linux with [xbps-static-bin](https://aur.archlinux.org/packages/xbps-static-bin) installed or Void-linux)
 ``` 
 git clone https://github.com/void-linux/void-packages.git
 git clone https://github.com/quarkscript/linux-armv7-xe303c12-only.git

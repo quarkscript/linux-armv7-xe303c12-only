@@ -71,7 +71,7 @@ if [ $(whoami) == root ] ; then
     mkdir -p ${basedir}/root
     if [ "$2" == "btrfs" ]; then
         mkfs.btrfs -f --label rootfs $rootp
-        mount $rootp ${basedir}/root -o,compress
+        mount $rootp ${basedir}/root -o,compress=zstd:5
     elif [ "$2" == "f2fs" ]; then
         mkfs.f2fs -f -O 'extra_attr flexible_inline_xattr compression encrypt ' -l rootfs $rootp
         mount $rootp ${basedir}/root -o,compress_algorithm=lzo,compress_extension=*
@@ -96,7 +96,7 @@ cat << EOF> ${basedir}/root/etc/fstab
 #
 # <file system> <mount point>   <type>  <options>       <dump>  <pass>
 # / was on /dev/sda2 during installation
-UUID=$rootuuid /               btrfs    rw,noatime,compress=zstd,autodefrag,ssd 0       0
+UUID=$rootuuid /               btrfs    rw,noatime,compress=zstd:5,ssd 0       0
 # swap was on /dev/sdaX during installation
 #UUID= none            swap    sw              0       0
 #/dev/sr0        /media/cdrom0   udf,iso9660 user,noauto     0       0

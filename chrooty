@@ -1,0 +1,34 @@
+#!/bin/bash
+clear
+rootdir=$(echo $PWD | sed 's/.*\///g')
+
+if [ "$(whoami)" == "root" ]; then
+#    mount --bind ../$rootdir ../$rootdir
+    mount --bind /proc proc
+    mount --bind /dev dev
+    mount --bind /sys sys
+    mount --bind /tmp tmp
+    
+    chroot ../$rootdir /bin/sh
+    
+    umount tmp
+    umount proc
+    umount dev
+    umount sys
+#    umount ../$rootdir
+
+else
+#    sudo mount --bind ../$rootdir ../$rootdir
+    sudo mount --bind /proc proc
+    sudo mount --bind /dev dev
+    sudo mount --bind /sys sys
+    sudo mount --bind /tmp tmp
+    
+    sudo chroot ../$rootdir /bin/sh
+    
+    sudo umount tmp
+    sudo umount proc
+    sudo umount dev
+    sudo umount sys
+#    sudo umount ../$rootdir
+fi
