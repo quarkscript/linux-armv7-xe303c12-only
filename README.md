@@ -40,19 +40,19 @@ Created disk images:
 - based on archlinux|ARM 
   - [minimal, console only (old)](https://drive.google.com/u/0/uc?id=1O94t7i_gBygdlDLsbyp9D8q7T425sgpM&export=download)
   - [minimal, console only](https://drive.google.com/u/0/uc?id=1H7-WnYNJtQDMwrfvdIBnLnrswquFC1av&export=download)
-  - [with xfce4 DE](https://drive.google.com/u/0/uc?id=1yTRChwYdWFl-0z06p19kZ0leLGR2vEyp&export=download) [screenshot](pics/archlinuxarm_xfce4.png)
+  - [with xfce4 DE](https://drive.google.com/u/0/uc?id=1yTRChwYdWFl-0z06p19kZ0leLGR2vEyp&export=download) . . . . . . . . . [screenshot](pics/archlinuxarm_xfce4.png)
 - based on Void-linux
   - [glibc, minimal, console only](https://drive.google.com/u/0/uc?id=1m4GPpz1W4meUyvFn0byTxbK-zENSg96X&export=download)
   - [glibc, with xfce4 DE](https://drive.google.com/u/0/uc?id=1ylcaJ4aiyN4Zl5GqmietmcGmgIhWoElo&export=download)
   - [musl, minimal, console only](https://drive.google.com/u/0/uc?id=1H5JzkGVWHtZeh1a0CgZciRosZtVrSiZg&export=download)
-  - [musl, with xfce4 DE](https://drive.google.com/u/0/uc?id=18ExLAz0M_gnjUF4PvsBnDo-0EnA4XZ6h&export=download) [screenshot](pics/void_musl_xfce4.png)
+  - [musl, with xfce4 DE](https://drive.google.com/u/0/uc?id=18ExLAz0M_gnjUF4PvsBnDo-0EnA4XZ6h&export=download) . . . . . . . . . [screenshot](pics/void_musl_xfce4.png)
 - based on debian linux
   - [Kali with xfce4 DE](https://drive.google.com/u/0/uc?id=1fW0oDNb44kXkEU_zrp_HtsZZtfphyetz&export=download)
   - [Devuan with xfce4 DE](https://drive.google.com/u/0/uc?id=1KSgE-3G2GEBzcYhk_JleVYWl6m061GdI&export=download)
-  - [Devuan with lxqt DE](https://drive.google.com/u/0/uc?id=1Oil2eE-RrpP5I1kGCoTsw1JEqxeTgsNC&export=download) [screenshot](pics/devuan_lxqt_root.png)
-  - [Devuan5 with bunsenlabs UI scripts](https://drive.google.com/u/0/uc?id=1-obTOWKIbgRjQZDjjQazbOtPFHboeA8N&export=download) [screenshot](pics/devuan-bunsen.png)
+  - [Devuan with lxqt DE](https://drive.google.com/u/0/uc?id=1Oil2eE-RrpP5I1kGCoTsw1JEqxeTgsNC&export=download) . . . . . . . . . [screenshot](pics/devuan_lxqt_root.png)
+  - [Devuan5 with bunsenlabs UI scripts](https://drive.google.com/u/0/uc?id=1-obTOWKIbgRjQZDjjQazbOtPFHboeA8N&export=download) . . . . . . . . . [screenshot](pics/devuan-bunsen.png)
 - based on alpine linux
-  - [with xfce4 DE](https://drive.google.com/u/0/uc?id=108zWgPRvxzveNVtW6GChxux_jEziENZT&export=download) [screenshot](pics/alpine_xfce.png)
+  - [with xfce4 DE](https://drive.google.com/u/0/uc?id=108zWgPRvxzveNVtW6GChxux_jEziENZT&export=download) . . . . . . . . . [screenshot](pics/alpine_xfce.png)
 
 > disk images updated 27.11.2022
 
