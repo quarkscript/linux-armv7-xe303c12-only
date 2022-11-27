@@ -1,6 +1,6 @@
 # Template file for 'linux_xe303c12'
 pkgname=linux_xe303c12
-version=5.15.55
+version=5.15.79
 revision=1
 wrksrc="linux-${version}"
 short_desc="Linux kernel and modules and headers (${version%.*} for XE303C12 armv7hf samsung/google-snow Chromebook)"
@@ -8,11 +8,12 @@ maintainer="none"
 license="GPL-2.0-only"
 homepage="https://www.kernel.org"
 distfiles="https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-${version}.tar.xz"
-checksum=1ef6bd508b6c3af3bef2d5b337e4477254dba284c79e329aa38f9763ae3bfdcc
+checksum=cba39031dbc0eed0785b8afdc8c58cf23df83e47001b2354fa44486ae699c154
 python_version=3
 patch_args="-Np1"
 
-export XBPS_TARGET_CFLAGS=" -O2 -pipe -march=armv7-a -mfpu=neon-vfpv4 --param l1-cache-size=64 --param l2-cache-size=1024 -fno-plt -faggressive-loop-optimizations -fguess-branch-probability -floop-nest-optimize -fomit-frame-pointer -fsel-sched-pipelining -fsel-sched-pipelining-outer-loops -fpredictive-commoning -fprefetch-loop-arrays -ftree-loop-optimize -floop-interchange -floop-unroll-and-jam -fpeel-loops -funswitch-loops -fvect-cost-model=dynamic -fsimd-cost-model=dynamic -fsplit-ivs-in-unroller -ftree-loop-ivcanon -ftree-loop-im "
+#export XBPS_TARGET_CFLAGS=" -O2 -pipe -march=armv7-a -mfpu=neon-vfpv4 --param l1-cache-size=64 --param l2-cache-size=1024 -fno-plt -faggressive-loop-optimizations -fguess-branch-probability -floop-nest-optimize -fomit-frame-pointer -fsel-sched-pipelining -fsel-sched-pipelining-outer-loops -fpredictive-commoning -fprefetch-loop-arrays -ftree-loop-optimize -floop-interchange -floop-unroll-and-jam -fpeel-loops -funswitch-loops -fvect-cost-model=dynamic -fsimd-cost-model=dynamic -fsplit-ivs-in-unroller -ftree-loop-ivcanon -ftree-loop-im "
+export XBPS_TARGET_CFLAGS=" -O2 -pipe -march=armv7-a -mfpu=neon-vfpv4 --param l1-cache-size=64 --param l2-cache-size=1024 -ftracer -funroll-loops -fprefetch-loop-arrays -fpredictive-commoning -fsel-sched-reschedule-pipelined "
 export XBPS_MAKEJOBS=$(grep 'model name' /proc/cpuinfo --count)
 
 # XXX Restrict archs until a proper <arch>-dotconfig is available in FILESDIR.
@@ -103,12 +104,14 @@ do_build() {
 	fi
 
 	# force some hw-specific optimizations
-	for tmpcycle in $(find -name Makefile); do
-        sed -i "s/armv7-a/armv7-a -O2 -mfpu=neon-vfpv4 --param l1-cache-size=64 --param l2-cache-size=1024 -fno-plt -faggressive-loop-optimizations -fguess-branch-probability -floop-nest-optimize -fomit-frame-pointer -fsel-sched-pipelining -fsel-sched-pipelining-outer-loops -fpredictive-commoning -fprefetch-loop-arrays -ftree-loop-optimize -floop-interchange -floop-unroll-and-jam -fpeel-loops -funswitch-loops -fvect-cost-model=dynamic -fsimd-cost-model=dynamic -fsplit-ivs-in-unroller -ftree-loop-ivcanon -ftree-loop-im /g" $tmpcycle
+	for tmpcycle in $(find -name Makefile | grep -v 'scripts/'); do
+        #sed -i "s/armv7-a/armv7-a -O2 -mfpu=neon-vfpv4 --param l1-cache-size=64 --param l2-cache-size=1024 -fno-plt -faggressive-loop-optimizations -fguess-branch-probability -floop-nest-optimize -fomit-frame-pointer -fsel-sched-pipelining -fsel-sched-pipelining-outer-loops -fpredictive-commoning -fprefetch-loop-arrays -ftree-loop-optimize -floop-interchange -floop-unroll-and-jam -fpeel-loops -funswitch-loops -fvect-cost-model=dynamic -fsimd-cost-model=dynamic -fsplit-ivs-in-unroller -ftree-loop-ivcanon -ftree-loop-im /g" $tmpcycle
+        sed -i "s/armv7-a/armv7-a+mp+neon-vfpv4  --param l1-cache-size=64 --param l2-cache-size=1024 -O2 -ftracer /g" $tmpcycle
         sed -i "s/vfpv /vfpv4 /g" $tmpcycle
         sed -i "s/vfpv,/vfpv4,/g" $tmpcycle
         sed -i "s/-Os/-O2/g" $tmpcycle
-        sed -i "s/-O2/-O2 -pipe --param l1-cache-size=64 --param l2-cache-size=1024 -fno-plt -faggressive-loop-optimizations -fguess-branch-probability -floop-nest-optimize -fomit-frame-pointer -fsel-sched-pipelining -fsel-sched-pipelining-outer-loops -fpredictive-commoning -fprefetch-loop-arrays -ftree-loop-optimize -floop-interchange -floop-unroll-and-jam -fpeel-loops -funswitch-loops -fvect-cost-model=dynamic -fsimd-cost-model=dynamic -fsplit-ivs-in-unroller -ftree-loop-ivcanon -ftree-loop-im /g" $tmpcycle
+        sed -i "s/-O2/-O2 --param l1-cache-size=64 --param l2-cache-size=1024 -ftracer -funroll-loops -fprefetch-loop-arrays -fpredictive-commoning -fsel-sched-reschedule-pipelined /g" $tmpcycle
+        #sed -i "s/-O2/-O2 -pipe --param l1-cache-size=64 --param l2-cache-size=1024 -fno-plt -faggressive-loop-optimizations -fguess-branch-probability -floop-nest-optimize -fomit-frame-pointer -fsel-sched-pipelining -fsel-sched-pipelining-outer-loops -fpredictive-commoning -fprefetch-loop-arrays -ftree-loop-optimize -floop-interchange -floop-unroll-and-jam -fpeel-loops -funswitch-loops -fvect-cost-model=dynamic -fsimd-cost-model=dynamic -fsplit-ivs-in-unroller -ftree-loop-ivcanon -ftree-loop-im /g" $tmpcycle
 	done
 	
 	export LDFLAGS=
